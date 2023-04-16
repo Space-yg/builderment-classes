@@ -65,7 +65,7 @@ export const wolframite = new Item({
 
 // Resources made from base resources only
 export const woodPlank = new Item({
-    name: "!ood Plank",
+    name: "Wood Plank",
     price: 1,
     image: "https://static.wikia.nocookie.net/builderment/images/e/ed/Item_wood_plank.png",
     factory: factory.workshop,
