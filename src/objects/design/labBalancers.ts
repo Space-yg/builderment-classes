@@ -1,0 +1,21 @@
+/**
+ * @author Space.yg
+ */
+
+import { LabBalancer } from "../../classes/design/LabBalancer.js"
+import { Requirements } from "../../classes/design/Requirements.js"
+
+new LabBalancer({name: "11x11", width: 11, height: 11, symmetrical: true, price: { gold: 704 }, requirements: new Requirements(), blueprint: "w6cpc0", image: "https://cdn.discordapp.com/attachments/1015687918829977681/1016645437157019678/IMG_4075.png"})
+new LabBalancer({name: "Universal", width: 15, height: 15, symmetrical: true, price: { gold: 0 }, requirements: new Requirements({roboticArmTier: 1}), blueprint: "kf2w0l", image: "https://cdn.discordapp.com/attachments/1015687918829977681/1071776980434948126/IMG_1168.png"})
+new LabBalancer({name: "Universal", width: 15, height: 15, symmetrical: true, price: { gold: 9488 }, requirements: new Requirements({roboticArmTier: 2}), blueprint: "x048p7", image: "https://cdn.discordapp.com/attachments/1007336434916675644/1077976054397935696/IMG_1383.png"})
+new LabBalancer({name: "Universal", width: 15, height: 15, symmetrical: true, price: { gold: 25488 }, requirements: new Requirements({roboticArmTier: 3}), blueprint: "basszf", image: "https://cdn.discordapp.com/attachments/1007336434916675644/1077976120038801438/IMG_1384.png"})
+new LabBalancer({name: "Universal", width: 15, height: 15, symmetrical: true, price: { gold: 89488 }, requirements: new Requirements({roboticArmTier: 4}), blueprint: "wtflbm", image: "https://cdn.discordapp.com/attachments/1007336434916675644/1077976208832204840/IMG_1385.png"})
+new LabBalancer({name: "19x19", width: 19, height: 19, symmetrical: true, price: { gold: 35328 }, requirements: new Requirements({roboticArmTier: 2, maxBeltSpeed: 165}), blueprint: "f3s325", image: "https://cdn.discordapp.com/attachments/1015687918829977681/1077973199754641468/IMG_1381.png"})
+new LabBalancer({name: "19x19", width: 19, height: 19, symmetrical: true, price: { gold: 99328 }, requirements: new Requirements({roboticArmTier: 3, maxBeltSpeed: 330}), blueprint: "13m0ys", image: "https://cdn.discordapp.com/attachments/1007336434916675644/1077974122958684230/IMG_1382.png"})
+new LabBalancer({name: "19x19", width: 19, height: 19, symmetrical: true, price: { gold: 355328 }, requirements: new Requirements({roboticArmTier: 4}), blueprint: "1xkq98", image: "https://cdn.discordapp.com/attachments/1007336434916675644/1077958460295086140/IMG_4060.png"})
+new LabBalancer({name: "17x17", width: 17, height: 17, symmetrical: true, price: { gold: 89992 }, requirements: new Requirements({roboticArmTier: 4, minBeltSpeed: 480, maxBeltSpeed: 480}), blueprint: "dkfjah", image: "https://cdn.discordapp.com/attachments/1015687918829977681/1015937244395229184/IMG_4061.png"})
+new LabBalancer({name: "17x17", width: 17, height: 17, symmetrical: true, price: { gold: 90016 }, requirements: new Requirements({roboticArmTier: 4, minBeltSpeed: 450, maxBeltSpeed: 450}), blueprint: "tahr1y", image: "https://cdn.discordapp.com/attachments/1015687918829977681/1015937630438965411/IMG_4062.png"})
+new LabBalancer({name: "17x17", width: 17, height: 17, symmetrical: true, price: { gold: 89952 }, requirements: new Requirements({roboticArmTier: 4, minBeltSpeed: 420, maxBeltSpeed: 420}), blueprint: "9az1tm", image: "https://cdn.discordapp.com/attachments/1015687918829977681/1015938305092751371/IMG_4063.png"})
+new LabBalancer({name: "21x21", width: 21, height: 21, symmetrical: true, price: { gold: 10112 }, requirements: new Requirements({roboticArmTier: 1, maxBeltSpeed: 180}), blueprint: "kmb48y", image: "https://cdn.discordapp.com/attachments/1015687918829977681/1015962208640979075/IMG_4072.png"})
+new LabBalancer({name: "21x21", width: 21, height: 21, symmetrical: true, price: { gold: 35712 }, requirements: new Requirements({roboticArmTier: 2, maxBeltSpeed: 330}), blueprint: "0mnjlc", image: "https://cdn.discordapp.com/attachments/1007336434916675644/1077958768001810482/IMG_4073.png"})
+new LabBalancer({name: "21x21", width: 21, height: 21, symmetrical: true, price: { gold: 99712 }, requirements: new Requirements({roboticArmTier: 3}), blueprint: "md76lv", image: "https://cdn.discordapp.com/attachments/1007336434916675644/1078612910210830346/IMG_4074.png"})
