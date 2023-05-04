@@ -1,0 +1,20 @@
+{
+  "name": "builderment-classes",
+  "version": "1.0.0",
+  "description": "A library full of all Builderment classes and objects",
+  "main": "./dir/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "Space.yg",
+  "license": "MIT",
+  "keywords": [
+    "builderment",
+    "classes",
+    "library"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Space-yg/builderment-classes.git"
+  }
+}
