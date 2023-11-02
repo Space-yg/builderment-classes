@@ -178,7 +178,7 @@ class Item extends Base {
         var lowest = Number.MAX_SAFE_INTEGER;
         // fix this plz. It works, but change syntax
         for (const name in this.baseResources)
-            lowest = Math.min(lowest, resources[Item.itemNameToVariableName[name]] * ((name === "Uranium Ore") ? uraniumMaxOutput : maxOutput) / this.baseResources[name]);
+            lowest = Math.min(lowest, resources[name] * ((name === "Uranium Ore") ? uraniumMaxOutput : maxOutput) / this.baseResources[name]);
         return lowest;
     }
 }
