@@ -204,7 +204,7 @@ export class Item extends Base {
         const uraniumMaxOutput = uraniumExtractor.maxOutput * 10
         var lowest = Number.MAX_SAFE_INTEGER
         // fix this plz. It works, but change syntax
-        for (const name in this.baseResources) lowest = Math.min(lowest, resources[Item.itemNameToVariableName[name as keyof { "Wood Log": string; Stone: string; "Iron Ore": string; "Copper Ore": string; Coal: string; Wolframite: string; "Uranium Ore": string }] as keyof ResourcesOptions] * ((name === "Uranium Ore") ? uraniumMaxOutput : maxOutput) / this.baseResources[name as keyof ResourcesOptions]!)
+        for (const name in this.baseResources) lowest = Math.min(lowest, resources[name as keyof ResourcesOptions] * ((name === "Uranium Ore") ? uraniumMaxOutput : maxOutput) / this.baseResources[name as keyof ResourcesOptions]!)
         return lowest
     }
 }
