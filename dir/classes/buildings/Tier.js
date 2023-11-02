@@ -21,7 +21,7 @@ export class Tier {
         var lastImage = options.tiers[Math.min(...tiersKeys)].image;
         if (lastImage === undefined)
             throw new Error("The smallest tier must have an image");
-        for (let i = Math.min(...tiersKeys); i < Math.max(...tiersKeys); i++) {
+        for (let i = Math.min(...tiersKeys); i <= Math.max(...tiersKeys); i++) {
             // Check if tier exists
             if (!options.tiers[i])
                 throw new Error(`The number ${i} is missing from the tiers. The tiers must include all integers from the smallest value (${Math.min(...tiersKeys)}) to the largest value (${Math.max(...tiersKeys)}).`);
