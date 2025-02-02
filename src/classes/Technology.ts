@@ -3,24 +3,25 @@
  */
 
 // Classes
-import { Base } from "./Base.js"
-import { Item } from "./Item.js"
-import { InputOptions } from "./Input.js"
-import { ItemCollector } from "./buildings/ItemCollector.js"
-import { Tiers } from "./buildings/tiers/Tiers.js"
-import { OutputTiers } from "./buildings/tiers/output-tiers/OutputTiers.js"
-import { Factory } from "./buildings/tiers/output-tiers/Factory.js"
-import { StorageTiers } from "./buildings/tiers/storage-tiers/StorageTiers.js"
-import { Storage } from "./buildings/tiers/storage-tiers/Storage.js"
-import { DistanceTiers } from "./buildings/tiers/distance-tiers/DistanceTiers.js"
-import { TransportationDistance } from "./buildings/tiers/distance-tiers/TransportationDistance.js"
+import { Price } from "./Price"
+import { Base } from "./Base"
+import { Item } from "./Item"
+import { ItemCollector } from "./buildings/ItemCollector"
+import { Tiers } from "./buildings/tiers/Tiers"
+import { OutputTiers } from "./buildings/tiers/output-tiers/OutputTiers"
+import { Factory } from "./buildings/tiers/output-tiers/Factory"
+import { StorageTiers } from "./buildings/tiers/storage-tiers/StorageTiers"
+import { Storage } from "./buildings/tiers/storage-tiers/Storage"
+import { DistanceTiers } from "./buildings/tiers/distance-tiers/DistanceTiers"
+import { TransportationDistance } from "./buildings/tiers/distance-tiers/TransportationDistance"
 
 // Types
-import { type BaseOptions } from "./Base.js"
-import { Price, type PriceOptions } from "./Price.js"
+import type { BaseParams } from "./Base"
+import type { PriceParams } from "./Price"
+import type { InputOptions } from "./Input"
 
 /** The build and tier of the build. */
-export interface BuildTierOptions {
+export type BuildTierOptions = {
 	/** The build that will unlock it's tier */
 	build: Tiers
 	/** The tier of the factory it will be unlocked at */
@@ -28,10 +29,10 @@ export interface BuildTierOptions {
 }
 
 /**
- * The technology options to make a new Technology.
- * @extends {{@link BaseOptions `BaseOptions`}
+ * The technology parameters to make a new Technology.
+ * @extends {{@link BaseParams `BaseParams`}
  */
-export interface TechnologyOptions extends BaseOptions {
+export type TechnologyParams = BaseParams & {
 	/** The items needed to unlock this technology. */
 	resourcesNeeded: InputOptions[]
 	/** The items, factories, or builds that this technology unlocks. */
@@ -50,24 +51,17 @@ export interface TechnologyOptions extends BaseOptions {
 
 /**
  * This class helps you make a new Technology.
- * @extends {{@link BaseOptions `BaseOptions`}
+ * @extends {{@link BaseParams `BaseOptions`}
  */
 export class Technology extends Base {
 
 	//// Static Properties
-	/** Total technologies that has been created */
-	static #amount: number = 0
-	/**
-	 * Total technologies that has been created
-	 * @readonly
-	 */
-	static override get amount(): number { return this.#amount }
 
 	/**
 	 * All the technologies that has been created
 	 * @readonly
 	 */
-	static readonly technologies: { [/** The name of the technology */ name: string]: Technology[] } = {}
+	static readonly technologies: Technology[] = []
 
 	/**
 	 * The image path of the Tech-tree.
@@ -79,54 +73,40 @@ export class Technology extends Base {
 	 * Total price of all technologies
 	 * @readonly
 	 */
-	static get totalPrice(): PriceOptions {
-		var total: PriceOptions = { gold: 0, gems: 0 }
-		for (const technologies in this.technologies) for (const technology of this.technologies[technologies]) for (const currency in total) total[currency as keyof PriceOptions]! += technology.price[currency as keyof PriceOptions] ?? 0
+	static get totalPrice(): PriceParams {
+		let total: PriceParams = { gold: 0, gems: 0 }
+		for (const technology of Technology.technologies) for (const currency in total) total[currency as keyof PriceParams]! += technology.price[currency as keyof PriceParams] ?? 0
 		return total
 	}
 
 	//// Static Methods
 	/**
 	 * Get a {@link Technology `Technology`} object.
-	 * @param technology A {@link Technology `Technology`} object.
-	 * @returns An array of {@link Technology `Technology`} objects.
-	 */
-	static getTechnology(technology: Technology): Technology[]
-	/**
-	 * Get a {@link Technology `Technology`} object.
-	 * @param technology A technology name.
+	 * @param name A technology name.
 	 * @returns An array of {@link Technology `Technology`} objects if found, else `undefined`.
 	 */
-	static getTechnology(technology: string): Technology[] | undefined
-	/**
-	 * Get a {@link Technology `Technology`} object.
-	 * @param technology A {@link Technology `Technology`} object or name.
-	 * @returns An array of {@link Technology `Technology`} objects if found, else `undefined`.
-	 */
-	static getTechnology(technology: Technology | string): Technology[] | undefined
-	static getTechnology(technology: Technology | string): Technology[] | undefined {
-		if (typeof technology !== "string") return [technology]
-		return Technology.technologies[technology]
+	static getTechnologiesByName(name: string): Technology[] {
+		const technologies: Technology[] = []
+		Technology.technologies.forEach(technology => { if (technology.name === name) technologies.push(technology) })
+		return technologies
 	}
 
 	//// Object Properties
+
 	/** The items needed to unlock this technology */
-	resourcesNeeded: TechnologyOptions["resourcesNeeded"]
-
+	resourcesNeeded: TechnologyParams["resourcesNeeded"]
 	/** The items, factories, or builds that this technology unlocks. */
-	unlocks: TechnologyOptions["unlocks"]
-
+	unlocks: TechnologyParams["unlocks"]
 	/**
 	 * The technologies that this technology unlocks.
 	 * @default []
 	*/
-	unlocksTechnologies: NonNullable<TechnologyOptions["unlocksTechnologies"]>
-
+	unlocksTechnologies: NonNullable<TechnologyParams["unlocksTechnologies"]>
 	/**
 	 * The technology needed to unlock this technology.
 	 * @default null
 	 */
-	technologyNeeded: NonNullable<TechnologyOptions["technologyNeeded"]> | null
+	technologyNeeded: NonNullable<TechnologyParams["technologyNeeded"]> | null
 
 	/**
 	 * Get the total price to get to this technology.
@@ -138,12 +118,13 @@ export class Technology extends Base {
 	}
 
 	//// Constructors
+
 	/**
 	 * Constructs a {@link Technology `Technology`} object.
-	 * @param options The technology options.
+	 * @param params The technology parameters.
 	 * @param passByReference Whether to pass the objects in the {@link technology `technology`} by reference or not. Default is `true`.
 	 */
-	constructor(options: TechnologyOptions, passByReference?: boolean)
+	constructor(params: TechnologyParams, passByReference?: boolean)
 	/**
 	 * Constructs a {@link Technology `Technology`} object.
 	 * @param technology A {@link Technology `Technology`} object.
@@ -152,11 +133,11 @@ export class Technology extends Base {
 	constructor(technology: Technology, passByReference?: boolean)
 	/**
 	 * Constructs a {@link Technology `Technology`} object.
-	 * @param technology A {@link Technology `Technology`} object or technology options.
+	 * @param technology A {@link Technology `Technology`} object or technology parameters.
 	 * @param passByReference Whether to pass the objects in the {@link technology `technology`} by reference or not. Default is `true`.
 	 */
-	constructor(technology: Technology | TechnologyOptions, passByReference?: boolean)
-	constructor(technologyOrOptions: Technology | TechnologyOptions, passByReference: boolean = true) {
+	constructor(technology: Technology | TechnologyParams, passByReference?: boolean)
+	constructor(technologyOrOptions: Technology | TechnologyParams, passByReference: boolean = true) {
 		super(technologyOrOptions)
 
 		// Image
@@ -178,7 +159,7 @@ export class Technology extends Base {
 			this.unlocks = technologyOrOptions.unlocks
 			this.unlocksTechnologies = technologyOrOptions.unlocksTechnologies ?? []
 		}
-		// Not passByReference
+		// NOT passByReference
 		else {
 			// technologyNeeded
 			this.technologyNeeded = typeof technologyOrOptions.technologyNeeded === "undefined" || technologyOrOptions.technologyNeeded === null ? null : new Technology(technologyOrOptions.technologyNeeded)
@@ -216,9 +197,7 @@ export class Technology extends Base {
 		}
 
 		// Statics
-		Technology.#amount++
-		if (typeof Technology.technologies[technologyOrOptions.name] === "undefined") Technology.technologies[technologyOrOptions.name] = [this]
-		else Technology.technologies[technologyOrOptions.name].push(this)
+		Technology.technologies.push(this)
 	}
 
 	//// Object Methods
@@ -246,24 +225,25 @@ export class Technology extends Base {
 	needs(technology: Technology): boolean
 	/**
 	 * Check if a {@link Technology `Technology`} object is needed to unlock this {@link Technology `Technology`} object.
-	 * @param technology The technology name to check if it is needed to unlock this {@link Technology `Technology`} object.
-	 * @returns `true` if {@link technology `technology`} is needed, `false` otherwise.
+	 * @param name The technology name to check if it is needed to unlock this {@link Technology `Technology`} object.
+	 * @returns `true` if {@link name `technology`} is needed, `false` otherwise.
 	 */
-	needs(technology: string): boolean
+	needs(name: string): boolean
 	/**
 	 * Check if a {@link Technology `Technology`} object is needed to unlock this {@link Technology `Technology`} object.
 	 * @param technology The {@link Technology `Technology`} object or technology name to check if it is needed to unlock this {@link Technology `Technology`} object.
 	 * @returns `true` if {@link technology `technology`} is needed, `false` otherwise.
 	 */
 	needs(technology: Technology | string): boolean
-	needs(technology: Technology | string): boolean {
-		// Get the technology
-		const t = Technology.getTechnology(technology)
-		if (typeof t === "undefined") return false
-		const tech = t[0]
+	needs(technologyOrName: Technology | string): boolean {
+		if (typeof technologyOrName === "string") {
+			// Get the technology
+			const technologies = Technology.getTechnologiesByName(technologyOrName)
+			if (technologies.length === 0) return false
 
-		// Find technology recursively
-		return this.needsFunction(tech)
+			// Find technology recursively
+			return technologies.values().every(technology => this.needsFunction(technology))
+		} else return this.needsFunction(technologyOrName)
 	}
 
 	/**

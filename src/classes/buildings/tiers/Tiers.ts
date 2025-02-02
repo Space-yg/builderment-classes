@@ -3,33 +3,34 @@
  */
 
 // Classes
-import { Tier } from "./Tier.js"
-import { Price } from "../../Price.js"
+import { Tier } from "./Tier"
+import { Price } from "@/classes/Price"
 
 // Functions
-import { objToString } from "../../../helpers.js"
+import { objToString } from "@/utils/helpers"
 
 // Types
-import { type TierOptions } from "./Tier.js"
+import type { TierParams } from "./Tier"
 
 /**
- * Options for {@link Tiers `Tiers`}.
- * @template O The options
+ * Parameters for {@link Tiers `Tiers`}. The `tier`s **must** be consecutive integers.
+ * @template P The parameters
  * @template T The tier
  */
-export interface TiersOptions<O extends TierOptions, T extends Tier> {
-	[/** The tiers. They must be consecutive integers. */ tier: number]: O | T
+export type TiersParams<P extends TierParams, T extends Tier> = {
+	[/** The tiers. They must be consecutive integers. */ tier: number]: P | T
 }
 
 /** Make a new tiers. */
 export class Tiers {
 
 	//// Object Properties
+
 	/** All tiers. */
 	tiers: { [/** The tiers. They must be consecutive integers. */ tier: number]: Tier }
 
 	/**
-	 * Get the total price to get to the maximum tier.
+	 * The total price to get to the maximum tier.
 	 * @readonly
 	 */
 	get maxPrice(): Price { return this.getTotalPrice(this.maxTierNum) }
@@ -59,12 +60,13 @@ export class Tiers {
 	get minTier(): Tier { return this.tiers[this.minTierNum] }
 
 	//// Constructors
+
 	/**
 	 * Constructs a {@link Tier `Tier`} object.
-	 * @param options The tiers options.
+	 * @param params The tiers parameters.
 	 * @param passByReference Whether to pass the objects in the {@link Tier `Tier`} by reference or not. Default is `true`.
 	 */
-	constructor(options: TiersOptions<TierOptions, Tier>, passByReference?: boolean)
+	constructor(params: TiersParams<TierParams, Tier>, passByReference?: boolean)
 	/**
 	 * Constructs a {@link Tier `Tier`} object.
 	 * @param tiers A {@link Tier `Tier`} object.
@@ -73,31 +75,31 @@ export class Tiers {
 	constructor(tiers: Tiers, passByReference?: boolean)
 	/**
 	 * Constructs a {@link Tier `Tier`} object.
-	 * @param tiers A {@link Tier `Tier`} object or tiers options.
+	 * @param tiers A {@link Tier `Tier`} object or tiers parameters.
 	 * @param passByReference Whether to pass the objects in the {@link Tier `Tier`} by reference or not. Default is `true`.
 	 */
-	constructor(tiers: Tiers | TiersOptions<TierOptions, Tier>, passByReference?: boolean)
-	constructor(optionsOrTiers: Tiers | TiersOptions<TierOptions, Tier>, passByReference: boolean = true) {
+	constructor(tiers: Tiers | TiersParams<TierParams, Tier>, passByReference?: boolean)
+	constructor(paramsOrTiers: Tiers | TiersParams<TierParams, Tier>, passByReference: boolean = true) {
 		// Tiers
-		if (optionsOrTiers instanceof Tiers) {
-			if (passByReference) this.tiers = optionsOrTiers.tiers
+		if (paramsOrTiers instanceof Tiers) {
+			if (passByReference) this.tiers = paramsOrTiers.tiers
 			else {
 				this.tiers = {}
-				for (const tier in optionsOrTiers.tiers) this.tiers[tier] = new Tier(optionsOrTiers.tiers[tier])
+				for (const tier in paramsOrTiers.tiers) this.tiers[tier] = new Tier(paramsOrTiers.tiers[tier])
 			}
 		}
-		// TiersOptions
+		// TiersParams
 		else {
 			// First tier must be an integer
-			const minTier = Math.min(...Object.keys(optionsOrTiers).map(tier => +tier))
-			if (parseInt(minTier + "") !== minTier) throw new Error(`All tiers must be integers.`)
+			const minTier = Math.min(...Object.keys(paramsOrTiers).map(tier => +tier))
+			if (Math.trunc(minTier) !== minTier) throw new Error(`All tiers must be integers.`)
 
 			this.tiers = {}
 
 			// For each tier from the minimum to the maximum
-			const maxTier = Math.max(...Object.keys(optionsOrTiers).map(tier => +tier))
+			const maxTier = Math.max(...Object.keys(paramsOrTiers).map(tier => +tier))
 			for (let i = minTier; i <= maxTier; i++) {
-				const tier = optionsOrTiers[i]
+				const tier = paramsOrTiers[i]
 
 				// Check if tier exists
 				if (!tier) throw new Error(`The number ${i} is missing from the tiers. The tiers must include all integers from the smallest value (${this.minTierNum}) to the largest value (${this.maxTierNum}).`)
@@ -110,6 +112,7 @@ export class Tiers {
 	}
 
 	//// Object Methods
+
 	/**
 	 * Converts the tiers into string.
 	 * @param limit The limit of how many tabs can be used. `limit` must be greater than `0`. Default is `2`.

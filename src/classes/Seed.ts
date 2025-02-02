@@ -3,17 +3,20 @@
  */
 
 // Classes
-import { InputOptions } from "./Input.js"
 import { Item } from "./Item.js"
+import SelfMap from "selfmap"
 
 // Objects
 import { extractor, extractorOutputPerMin, uraniumExtractor, uraniumExtractorOutputPerMin } from "../objects/buildings/factories.js"
 
 // Other
-import { objToString } from "../helpers.js"
+import { objToString } from "../utils/helpers.js"
+
+// Types
+import type { InputOptions } from "./Input.d.ts"
 
 /** The resources type for all resources in a seed */
-export interface ResourcesOptions {
+export type ResourcesParams = {
 	/** The amount of Wood Log deposits in the seed */
 	"Wood Log": number
 	/** The amount of Stone deposits in the seed */
@@ -31,22 +34,22 @@ export interface ResourcesOptions {
 }
 
 /** The Advanced World number options for World Size and Resource Amount when creating a new seed */
-export type advancedWorldChoices = 50 | 75 | 100 | 150 | 200
+export type AdvancedWorldSetting = 50 | 75 | 100 | 150 | 200
 
-/** The options of the item type */
-export interface SeedOptions {
+/** The parameters of the item type */
+export type SeedParams = {
 	/** The resources in a seed */
-	resources: ResourcesOptions
+	resources: ResourcesParams
 	/**
 	 * The World Size of the seed
 	 * @default 100
 	 */
-	worldSize?: advancedWorldChoices
+	worldSize?: AdvancedWorldSetting
 	/**
 	 * The Resource Amount of the seed
 	 * @default 100
 	 */
-	resourceAmount?: advancedWorldChoices
+	resourceAmount?: AdvancedWorldSetting
 	/** The seed */
 	seed?: string
 }
@@ -59,9 +62,9 @@ type BitsRange = [from: number, to: number]
  * @returns The result of the array of hex numbers
  */
 function hexByteValue(array: number[]): number {
-	var hex = ""
+	let hex = ""
 	array.forEach(num => {
-		var h = num.toString(16)
+		let h = num.toString(16)
 		hex += (h.length !== 2 ? "0" : "") + h
 	})
 	return parseInt(hex, 16)
@@ -71,24 +74,21 @@ function hexByteValue(array: number[]): number {
 export class Seed {
 
 	//// Static Properties
-	//* Private
-	/** Total seeds that has been created with a seed. */
-	static #amount = 0
 
-	//* Public
 	/**
-	 * Total seeds that has been created with a seed.
-	 * @readonly
+	 * Keep track of newly created seeds in the {@link seeds seeds} static variable
+	 * @default false
 	 */
-	static get amount() { return this.#amount }
+	static keepTrackOfSeeds: boolean = false
 
 	/**
 	 * All the seeds that has been created with a seed.
 	 * @readonly
 	 */
-	static readonly seeds: { [/** The seed */ seed: string]: Seed } = {}
+	static readonly seeds: SelfMap<Seed, "seed"> = new SelfMap<Seed, "seed">([], "seed")
 
 	//// Static Methods
+
 	// TODO: This can be remade to make it more efficient
 	/**
 	 * Get the amount of each raw resource needed for it to NOT be the limited resource
@@ -96,29 +96,14 @@ export class Seed {
 	 * @param resources The resources of the seed to calculate the limited resources
 	 * @returns The amount of each raw resource needed for it to NOT be the limited resource
 	 */
-	static getLimitedDeposits(item: Item, resources: ResourcesOptions): InputOptions[]
-	/**
-	 * Get the amount of each raw resource needed for it to NOT be the limited resource
-	 * @param item The item name to calculate the limited resource based on the base resource of that item
-	 * @param resources The resources of the seed to calculate the limited resources
-	 * @returns The amount of each raw resource needed for it to NOT be the limited resource
-	 */
-	static getLimitedDeposits(item: string, resources: ResourcesOptions): InputOptions[]
-	/**
-	 * Get the amount of each raw resource needed for it to NOT be the limited resource
-	 * @param item The {@link Item `Item`} object or name to calculate the limited resource based on the base resource of that item
-	 * @param resources The resources of the seed to calculate the limited resources
-	 * @returns The amount of each raw resource needed for it to NOT be the limited resource
-	 */
-	static getLimitedDeposits(item: Item | string, resources: ResourcesOptions): InputOptions[]
-	static getLimitedDeposits(item: Item | string, resources: ResourcesOptions): InputOptions[] {
+	static getLimitedDeposits(item: Item, resources: ResourcesParams): InputOptions[] {
 		// Get the base resources of the item
-		var baseResources = Item.getAmountOfBaseResources(item)
+		let baseResources = item.getAmountOfBaseResources()
 
 		// Calculate the ratios
 		const limitedAmounts: { [name: string]: number } = {}
 		for (const key in baseResources) {
-			const k = key as keyof ResourcesOptions
+			const k = key as keyof ResourcesParams
 			if (!resources[k]) throw new Error(`Resource (${k}) cannot be 0, null, or undefined`)
 
 			// Calculate the ratios
@@ -132,14 +117,14 @@ export class Seed {
 			const name = Object.keys(limitedAmounts).find(key => limitedAmounts[key] === min)!
 			delete limitedAmounts[name]
 			amounts.push({
-				item: Item.items[name],
+				item: Item.getItemsByName(name)[0],
 				amount: min,
 			})
 		}
 
 		// Calculate the amount needed to NOT be the limited resource
 		for (let i = 0; i < amounts.length - 1; i++) {
-			amounts[i].amount = amounts[i + 1].amount * baseResources[amounts[i].item.name as keyof ResourcesOptions]! - resources[amounts[i].item.name as keyof ResourcesOptions]
+			amounts[i].amount = amounts[i + 1].amount * baseResources[amounts[i].item.name as keyof ResourcesParams]! - resources[amounts[i].item.name as keyof ResourcesParams]
 		}
 		amounts[amounts.length - 1].amount = 0
 
@@ -152,22 +137,7 @@ export class Seed {
 	 * @param resources The resources in the seed
 	 * @returns The limited resource
 	 */
-	static getLimitedDeposit(item: Item, resources: ResourcesOptions): InputOptions
-	/**
-	 * Get the resource that limits making more of the item in the seed
-	 * @param item The item name to get the resources that limits making more of this item
-	 * @param resources The resources in the seed
-	 * @returns The limited resource
-	 */
-	static getLimitedDeposit(item: string, resources: ResourcesOptions): InputOptions
-	/**
-	 * Get the resource that limits making more of the item in the seed
-	 * @param item The {@link Item `Item`} object or name to get the resources that limits making more of this item
-	 * @param resources The resources in the seed
-	 * @returns The limited resource
-	 */
-	static getLimitedDeposit(item: Item | string, resources: ResourcesOptions): InputOptions
-	static getLimitedDeposit(item: Item | string, resources: ResourcesOptions): InputOptions { return Seed.getLimitedDeposits(item, resources)[0] }
+	static getLimitedDeposit(item: Item, resources: ResourcesParams): InputOptions { return Seed.getLimitedDeposits(item, resources)[0] }
 
 	// TODO: Add support for constructing Seed object from .sav file
 	/**
@@ -190,7 +160,7 @@ export class Seed {
 		const depositsInfoLocationByte: BitsRange = [22, 26]
 		/** The location of the deposits information */
 		const depositsInfoLocation: BitsRange = [0, 0]
-		const seedOptions: SeedOptions = {
+		const seedParams: SeedParams = {
 			resources: {
 				"Copper Ore": 0,
 				"Iron Ore": 0,
@@ -207,31 +177,33 @@ export class Seed {
 		depositsInfoLocation[1] = depositsInfoLocation[0] + 71
 		console.log(depositsInfoLocation)
 
-		return new Seed(seedOptions)
+		return new Seed(seedParams)
 	}
 
 	//// Object Properties
+
 	/** The resources in a seed. */
-	resources: SeedOptions["resources"]
+	resources: SeedParams["resources"]
 	/**
 	 * The world size of the seed.
 	 * @default 100
 	 */
-	worldSize: NonNullable<SeedOptions["worldSize"]>
+	worldSize: NonNullable<SeedParams["worldSize"]>
 	/**
 	 * The resource amount of the seed.
 	 * @default 100
 	 */
-	resourceAmount: NonNullable<SeedOptions["resourceAmount"]>
+	resourceAmount: NonNullable<SeedParams["resourceAmount"]>
 	/** The seed. */
-	seed?: SeedOptions["seed"]
+	seed?: SeedParams["seed"]
 
 	//// Constructors
+
 	/**
 	 * Construct a {@link Seed} object.
-	 * @param options The seed options.
+	 * @param params The seed parameters.
 	 */
-	constructor(options: SeedOptions)
+	constructor(params: SeedParams)
 	/**
 	 * Construct a {@link Seed} object.
 	 * @param seed A {@link Seed} object.
@@ -240,24 +212,22 @@ export class Seed {
 	constructor(seed: Seed, passByReference?: boolean)
 	/**
 	 * Construct a {@link Seed} object.
-	 * @param seed A {@link Seed} object or seed options.
+	 * @param seed A {@link Seed} object or seed parameters.
 	 * @param passByReference Whether to pass the objects in {@link seed `seed`} by reference or not. Default is `true.`
 	 */
-	constructor(seed: Seed | SeedOptions, passByReference?: boolean)
-	constructor(objectOrOptions: Seed | SeedOptions, passByReference: boolean = true) {
-		if (passByReference) this.resources = objectOrOptions.resources
-		else this.resources = { ...objectOrOptions.resources }
-		this.worldSize = objectOrOptions.worldSize ?? 100
-		this.resourceAmount = objectOrOptions.resourceAmount ?? 100
-		this.seed = objectOrOptions.seed
+	constructor(seed: Seed | SeedParams, passByReference?: boolean)
+	constructor(seedOrParams: Seed | SeedParams, passByReference: boolean = true) {
+		if (passByReference) this.resources = seedOrParams.resources
+		else this.resources = { ...seedOrParams.resources }
+		this.worldSize = seedOrParams.worldSize ?? 100
+		this.resourceAmount = seedOrParams.resourceAmount ?? 100
+		this.seed = seedOrParams.seed
 
-		if (typeof objectOrOptions.seed !== "undefined") {
-			Seed.#amount++
-			Seed.seeds[objectOrOptions.seed] = this
-		}
+		if (Seed.keepTrackOfSeeds && typeof seedOrParams.seed !== "undefined") Seed.seeds.add(this)
 	}
 
 	//// Object Methods
+
 	/**
 	 * Converts the seed into string
 	 * @param limit The limit of how many tabs can be used. `limit` must be greater than 0. Default is 2
@@ -273,65 +243,26 @@ export class Seed {
 	 * @param item The {@link Item `Item`} object to calculate the limited resource based on the base resource of that item
 	 * @returns The amount of each raw resource needed for it to NOT be the limited resource
 	 */
-	getLimitedDeposits(item: Item): InputOptions[]
-	/**
-	 * Get the amount of each raw resource needed for it to NOT be the limited resource
-	 * @param item The item name to calculate the limited resource based on the base resource of that item
-	 * @returns The amount of each raw resource needed for it to NOT be the limited resource
-	 */
-	getLimitedDeposits(item: string): InputOptions[]
-	/**
-	 * Get the amount of each raw resource needed for it to NOT be the limited resource
-	 * @param item The {@link Item `Item`} object or name to calculate the limited resource based on the base resource of that item
-	 * @returns The amount of each raw resource needed for it to NOT be the limited resource
-	 */
-	getLimitedDeposits(item: Item | string): InputOptions[]
-	getLimitedDeposits(item: Item | string): InputOptions[] { return Seed.getLimitedDeposits(item, this.resources) }
+	getLimitedDeposits(item: Item): InputOptions[] { return Seed.getLimitedDeposits(item, this.resources) }
 
 	/**
 	 * Get the resource that limits making more of the item in the seed
 	 * @param item The {@link Item `Item`} object to get the resources that limits making more of this item
 	 * @returns The limited resource
 	 */
-	getLimitedDeposit(item: Item): InputOptions
-	/**
-	 * Get the resource that limits making more of the item in the seed
-	 * @param item The item name to get the resources that limits making more of this item
-	 * @returns The limited resource
-	 */
-	getLimitedDeposit(item: string): InputOptions
-	/**
-	 * Get the resource that limits making more of the item in the seed
-	 * @param item The {@link Item `Item`} object or name to get the resources that limits making more of this item
-	 * @returns The limited resource
-	 */
-	getLimitedDeposit(item: Item | string): InputOptions
-	getLimitedDeposit(item: Item | string): InputOptions { return Seed.getLimitedDeposit(item, this.resources) }
+	getLimitedDeposit(item: Item): InputOptions { return Seed.getLimitedDeposit(item, this.resources) }
 
 	/**
 	 * Get the maximum amount to make an item in the seed
 	 * @param item The {@link Item `Item`} object to get the max of
 	 * @returns The maximum amount to make the item in the seed
 	 */
-	getMax(item: Item): number
-	/**
-	 * Get the maximum amount to make an item in the seed
-	 * @param item The item name to get the max of
-	 * @returns The maximum amount to make the item in the seed
-	 */
-	getMax(item: string): number
-	/**
-	 * Get the maximum amount to make an item in the seed
-	 * @param item The {@link Item `Item`} object or name to get the max of
-	 * @returns The maximum amount to make the item in the seed
-	 */
-	getMax(item: Item | string): number
-	getMax(item: Item | string): number {
-		var i = Item.getAmountOfBaseResources(item)
+	getMax(item: Item): number {
+		let i = item.getAmountOfBaseResources()
 		const extractorMaxOutput = extractor.maxTier.output * extractorOutputPerMin
 		const uraniumExtractorMaxOutput = uraniumExtractor.maxTier.output * uraniumExtractorOutputPerMin
-		var maximum = Number.MAX_SAFE_INTEGER
-		for (const key in i) maximum = Math.min(maximum, this.resources[key as keyof ResourcesOptions] * (key === "Uranium Ore" ? uraniumExtractorMaxOutput : extractorMaxOutput) / i[key as keyof ResourcesOptions]!)
+		let maximum = Number.MAX_SAFE_INTEGER
+		for (const key in i) maximum = Math.min(maximum, this.resources[key as keyof ResourcesParams] * (key === "Uranium Ore" ? uraniumExtractorMaxOutput : extractorMaxOutput) / i[key as keyof ResourcesParams]!)
 		return maximum
 	}
 
@@ -342,7 +273,7 @@ export class Seed {
 	 */
 	equals(seed: Seed): boolean {
 		if (this === seed) return true
-		for (const resource in this.resources) if (this.resources[resource as keyof ResourcesOptions] !== seed.resources[resource as keyof ResourcesOptions]) return false
+		for (const resource in this.resources) if (this.resources[resource as keyof ResourcesParams] !== seed.resources[resource as keyof ResourcesParams]) return false
 		return this.resourceAmount === seed.resourceAmount
 			&& this.worldSize === seed.worldSize
 	}

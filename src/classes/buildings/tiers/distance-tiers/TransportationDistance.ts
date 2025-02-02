@@ -3,20 +3,20 @@
  */
 
 // Classes
-import { DistanceTiers } from "./DistanceTiers.js"
+import { DistanceTiers } from "./DistanceTiers"
 
 // Types
-import { type Price } from "../../../Price.js"
-import { type DistanceTiersOptions } from "./DistanceTiers.js"
+import type { Price } from "@/classes/Price"
+import type { DistanceTiersParams } from "./DistanceTiers"
 
-/** Options for {@link TransportationDistance `TransportationDistance`}. */
-export interface TransportationDistanceOptions {
+/** Parameters for {@link TransportationDistance `TransportationDistance`}. */
+export type TransportationDistanceParams = {
 	/** The name of the transportation distance. */
 	name: string
 	/** The description of the transportation distance. This is the in-game description. */
 	description: string
 	/** The tiers of the transportation distance. */
-	tiers: DistanceTiersOptions | DistanceTiers
+	tiers: DistanceTiersParams | DistanceTiers
 }
 
 /**
@@ -26,34 +26,30 @@ export interface TransportationDistanceOptions {
 export class TransportationDistance extends DistanceTiers {
 
 	//// Static properties
-	/** Total transportation distances that has been created. */
-	static #amount = 0
-	/**
-	 * Total transportation distances that has been created.
-	 * @readonly
-	 */
-	static get amount() { return this.#amount }
+
 	/**
 	 * All the transportation distances that has been created.
 	 * @readonly
 	 */
-	static readonly transportationDistances: { [/** The name of the transportation distance. */ name: string]: TransportationDistance } = {}
+	static readonly transportationDistances: TransportationDistance[] = []
 
-	//// Properties
+	//// Object Properties
+
 	/** The name of the transportation distance. */
-	name: TransportationDistanceOptions["name"]
+	name: TransportationDistanceParams["name"]
 	/** The price of the first tier of the transportation distance. */
 	price: Price
 	/** The description of the transportation distance. */
-	description: TransportationDistanceOptions["description"]
+	description: TransportationDistanceParams["description"]
 
 	//// Constructors
+
 	/**
 	 * Constructs a new {@link TransportationDistance `TransportationDistance`} object.
-	 * @param options The transportation distance options.
+	 * @param params The transportation distance parameters.
 	 * @param passByReference Whether to pass the objects in the {@link TransportationDistance `TransportationDistance`} by reference or not. Default is `true`.
 	 */
-	constructor(options: TransportationDistanceOptions, passByReference?: boolean)
+	constructor(params: TransportationDistanceParams, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link TransportationDistance `TransportationDistance`} object.
 	 * @param transportationDistance A {@link TransportationDistance `TransportationDistance`} object.
@@ -62,11 +58,11 @@ export class TransportationDistance extends DistanceTiers {
 	constructor(transportationDistance: TransportationDistance, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link TransportationDistance `TransportationDistance`} object.
-	 * @param transportationDistance A {@link TransportationDistance `TransportationDistance`} object or transportation distance options.
+	 * @param transportationDistance A {@link TransportationDistance `TransportationDistance`} object or transportation distance parameters.
 	 * @param passByReference Whether to pass the objects in the {@link TransportationDistance `TransportationDistance`} by reference or not. Default is `true`.
 	 */
-	constructor(transportationDistance: TransportationDistance | TransportationDistanceOptions, passByReference?: boolean)
-	constructor(optionsOrTransportationDistance: TransportationDistance | TransportationDistanceOptions, passByReference: boolean = true) {
+	constructor(transportationDistance: TransportationDistance | TransportationDistanceParams, passByReference?: boolean)
+	constructor(optionsOrTransportationDistance: TransportationDistance | TransportationDistanceParams, passByReference: boolean = true) {
 		super(optionsOrTransportationDistance.tiers, passByReference)
 
 		this.name = optionsOrTransportationDistance.name
@@ -81,11 +77,11 @@ export class TransportationDistance extends DistanceTiers {
 		}
 
 		// Statics
-		TransportationDistance.#amount++
-		TransportationDistance.transportationDistances[optionsOrTransportationDistance.name] = this
+		TransportationDistance.transportationDistances.push(this)
 	}
 
 	//// Object Methods
+
 	/**
 	 * These are similarities between the {@link equals `equals`} and {@link strictlyEquals `strictlyEquals`} methods.
 	 * @param transportationDistance The other {@link TransportationDistance `TransportationDistance`} object.

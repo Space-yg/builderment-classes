@@ -2,8 +2,8 @@
  * @author Space.yg
  */
 
-/** Options for area. */
-export interface AreaOptions {
+/** The area parameters */
+export type AreaParams = {
 	/** The width. */
 	width: number
 	/** The height. */
@@ -14,6 +14,7 @@ export interface AreaOptions {
 export class Area {
 
 	//// Object Properties
+
 	/** The width. */
 	width: number
 	/** The height. */
@@ -27,27 +28,24 @@ export class Area {
 	get area() { return this.width * this.height }
 
 	//// Constructors
+
 	/**
 	 * Constructs a new {@link Area `Area`} object.
-	 * @param options The area options.
+	 * @param params The area parameters.
 	 */
-	constructor(options: AreaOptions)
+	constructor(params: AreaParams)
 	/**
 	 * Constructs a new {@link Area `Area`} object.
 	 * @param area An {@link Area `Area`} object.
 	 */
 	constructor(area: Area)
-	/**
-	 * Constructs a new {@link Area `Area`} object.
-	 * @param area An {@link Area `Area`} object or area options.
-	 */
-	constructor(area: Area | AreaOptions)
-	constructor(optionsOrArea: Area | AreaOptions) {
-		this.width = optionsOrArea.width
-		this.height = optionsOrArea.height
+	constructor(paramsOrArea: Area | AreaParams) {
+		this.width = paramsOrArea.width
+		this.height = paramsOrArea.height
 	}
 
 	//// Object Methods
+
 	/**
 	 * Determine if this {@link Area `Area`} object is equal to another {@link Area `Area`} object.
 	 * @param area The other {@link Area `Area`} object.

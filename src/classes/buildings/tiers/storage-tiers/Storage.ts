@@ -3,20 +3,20 @@
  */
 
 // Classes
-import { Price } from "../../../Price.js"
-import { StorageTiers } from "./StorageTiers.js"
+import { StorageTiers } from "./StorageTiers"
 
 // Types
-import { type StorageTiersOptions } from "./StorageTiers.js"
+import type { Price } from "@/classes/Price"
+import type { StorageTiersParams } from "./StorageTiers"
 
-/** Options for {@link Storage `Storage`}. */
-export interface StorageOptions {
+/** Parameters for {@link Storage `Storage`}. */
+export type StorageParams = {
 	/** The name of the storage. */
 	name: string
 	/** The description of the storage. */
 	description: string
 	/** The tiers of the storage. */
-	tiers: StorageTiersOptions | StorageTiers
+	tiers: StorageTiersParams | StorageTiers
 }
 
 /**
@@ -25,9 +25,18 @@ export interface StorageOptions {
  */
 export class Storage extends StorageTiers {
 
+	//// Static properties
+
+	/**
+	 * All the transportations that has been created.
+	 * @readonly
+	 */
+	static readonly storages: Storage[] = []
+
 	//// Object Properties
+
 	/** The name of the storage. */
-	name: StorageOptions["name"]
+	name: StorageParams["name"]
 	/**
 	 * The price of the storage.
 	 * @default
@@ -40,14 +49,15 @@ export class Storage extends StorageTiers {
 	 */
 	price: Price
 	/** The description of the storage. */
-	description: StorageOptions["description"]
+	description: StorageParams["description"]
 
 	//// Constructors
+
 	/**
 	 * Construct a {@link Storage `Storage`} object.
-	 * @param options The tier options.
+	 * @param params The tier parameters.
 	 */
-	constructor(options: StorageOptions, passByReference?: boolean)
+	constructor(params: StorageParams, passByReference?: boolean)
 	/**
 	 * Construct a {@link Storage `Storage`} object.
 	 * @param storage A {@link Storage `Storage`} object.
@@ -55,25 +65,29 @@ export class Storage extends StorageTiers {
 	constructor(storage: Storage, passByReference?: boolean)
 	/**
 	 * Construct a {@link Storage `Storage`} object.
-	 * @param storage A {@link Storage `Storage`} object or tier options.
+	 * @param storage A {@link Storage `Storage`} object or tier parameters.
 	 */
-	constructor(storage: Storage | StorageOptions, passByReference?: boolean)
-	constructor(optionsOrStorage: Storage | StorageOptions, passByReference: boolean = true) {
-		super(optionsOrStorage.tiers, passByReference)
+	constructor(storage: Storage | StorageParams, passByReference?: boolean)
+	constructor(paramsOrStorage: Storage | StorageParams, passByReference: boolean = true) {
+		super(paramsOrStorage.tiers, passByReference)
 
-		this.name = optionsOrStorage.name
+		this.name = paramsOrStorage.name
 		this.price = this.tiers[this.minTierNum].price
-		this.description = optionsOrStorage.description
+		this.description = paramsOrStorage.description
 
 		// Image
-		if (optionsOrStorage instanceof Storage) for (const tier in this.tiers) this.tiers[tier].image = optionsOrStorage.tiers[tier].image ?? this.tiers[tier].image + `storages/${this.name} Tier ${tier}.png`
+		if (paramsOrStorage instanceof Storage) for (const tier in this.tiers) this.tiers[tier].image = paramsOrStorage.tiers[tier].image ?? this.tiers[tier].image + `storages/${this.name} Tier ${tier}.png`
 		else {
-			if (optionsOrStorage.tiers instanceof StorageTiers) for (const tier in this.tiers) this.tiers[tier].image = optionsOrStorage.tiers.tiers[tier].image ?? this.tiers[tier].image + `storages/${this.name} Tier ${tier}.png`
-			else for (const tier in this.tiers) this.tiers[tier].image = optionsOrStorage.tiers[tier].image ?? this.tiers[tier].image + `storages/${this.name} Tier ${tier}.png`
+			if (paramsOrStorage.tiers instanceof StorageTiers) for (const tier in this.tiers) this.tiers[tier].image = paramsOrStorage.tiers.tiers[tier].image ?? this.tiers[tier].image + `storages/${this.name} Tier ${tier}.png`
+			else for (const tier in this.tiers) this.tiers[tier].image = paramsOrStorage.tiers[tier].image ?? this.tiers[tier].image + `storages/${this.name} Tier ${tier}.png`
 		}
+
+		// Statics
+		Storage.storages.push(this)
 	}
 
 	//// Object Methods
+
 	/**
 	 * These are similarities between the {@link equals `equals`} and {@link strictlyEquals `strictlyEquals`} methods.
 	 * @param storage The other {@link Storage `Storage`} object.

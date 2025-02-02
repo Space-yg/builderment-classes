@@ -2,13 +2,17 @@
  * @author Space.yg
  */
 
-import { Base, BaseOptions } from "../Base.js"
+// Classes
+import { Base } from "../Base.js"
+
+// Types
+import type { BaseParams } from "../Base.js"
 
 /**
- * Options for {@link Decoration `Decoration`}.
- * @extends {{@link BaseOptions `BaseOptions`}
+ * Parameters for {@link Decoration `Decoration`}.
+ * @extends {{@link BaseParams `BaseParams`}
  */
-export interface DecorationOptions extends BaseOptions { }
+export type DecorationParams = BaseParams & {}
 
 /**
  * Create a new {@link Decoration `Decoration`}.
@@ -17,19 +21,13 @@ export interface DecorationOptions extends BaseOptions { }
 export class Decoration extends Base {
 
 	//// Static Properties
-	/** Total decorations that has been created. */
-	static #amount: number = 0
-	/**
-	 * Total decorations that has been created.
-	 * @readonly
-	 */
-	static override get amount(): number { return this.#amount }
-	/** All the decorations that has been created. */
+
 	/**
 	 * All the decorations that has been created.
 	 * @readonly
 	*/
-	static readonly decorations: { [/** The name of the decoration */ name: string]: Decoration[] } = {}
+	static readonly decorations: Decoration[] = []
+
 	/**
 	 * The description of all decoration builds.
 	 * @readonly
@@ -37,11 +35,12 @@ export class Decoration extends Base {
 	static get description(): string { return "Purely decorative, make your factory one of a kind." }
 
 	//// Constructor
+
 	/**
 	 * Constructs a new {@link Decoration `Decoration`} object.
-	 * @param options The decoration options.
+	 * @param params The decoration parameters.
 	 */
-	constructor(options: DecorationOptions)
+	constructor(params: DecorationParams)
 	/**
 	 * Constructs a new {@link Decoration `Decoration`} object.
 	 * @param decoration A {@link Decoration `Decoration`} object.
@@ -49,18 +48,15 @@ export class Decoration extends Base {
 	constructor(decoration: Decoration)
 	/**
 	 * Constructs a new {@link Decoration `Decoration`} object.
-	 * @param decoration A {@link Decoration `Decoration`} object or decoration options.
+	 * @param decoration A {@link Decoration `Decoration`} object or decoration parameters.
 	 */
-	constructor(decoration: Decoration | DecorationOptions)
-	constructor(optionsOrDecoration: Decoration | DecorationOptions) {
-		super(optionsOrDecoration)
+	constructor(paramsOrDecoration: Decoration | DecorationParams) {
+		super(paramsOrDecoration)
 
 		// Image
-		this.image = optionsOrDecoration.image ?? this.image + `decorations/${this.name}`
+		this.image = paramsOrDecoration.image ?? this.image + `decorations/${this.name}.png`
 
 		// Statics
-		Decoration.#amount++
-		if (typeof Decoration.decorations[optionsOrDecoration.name] === "undefined") Decoration.decorations[optionsOrDecoration.name] = [this]
-		else Decoration.decorations[optionsOrDecoration.name].push(this)
+		Decoration.decorations.push(this)
 	}
 }

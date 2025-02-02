@@ -80,166 +80,125 @@ export const Space: {
 //// Classes
 export {
 	Area,
-	AreaOptions,
-} from "./classes/Area.js"
+	type AreaParams,
+} from "./classes/Area"
 export {
 	Base,
-	BaseOptions,
-} from "./classes/Base.js"
-export { Currency } from "./classes/Currency.js"
+	type BaseParams,
+} from "./classes/Base"
 export type {
 	InputOptions,
-	InputOptionsObject,
-	InputPerMinOptions,
-} from "./classes/Input.d.ts"
+	InputMap,
+} from "./classes/Input"
 export {
 	Item,
-	ItemOptions,
-} from "./classes/Item.js"
+	type ItemParams,
+} from "./classes/Item"
 export {
 	Price,
-	PriceOptions,
-} from "./classes/Price.js"
+	type PriceParams,
+} from "./classes/Price"
 export {
-	advancedWorldChoices,
-	ResourcesOptions,
 	Seed,
-	SeedOptions,
-} from "./classes/Seed.js"
+	type AdvancedWorldSetting,
+	type ResourcesParams,
+	type SeedParams,
+} from "./classes/Seed"
 export {
-	BuildTierOptions,
 	Technology,
-	TechnologyOptions,
-} from "./classes/Technology.js"
+	type BuildTierOptions,
+	type TechnologyParams,
+} from "./classes/Technology"
 
 //* Buildings
 export {
 	Decoration,
-	DecorationOptions,
-} from "./classes/buildings/Decoration.js"
+	type DecorationParams,
+} from "./classes/buildings/Decoration"
 export {
 	ItemCollector,
-	ItemCollectorOptions,
-} from "./classes/buildings/ItemCollector.js"
+	type ItemCollectorParams,
+} from "./classes/buildings/ItemCollector"
 export {
 	PowerPlant,
-	PowerPlantOptions,
-} from "./classes/buildings/PowerPlant.js"
+	type PowerPlantParams,
+} from "./classes/buildings/PowerPlant"
 
 //* Tiers
 export {
 	Tier,
-	TierOptions,
-} from "./classes/buildings/tiers/Tier.js"
+	type TierParams,
+} from "./classes/buildings/tiers/Tier"
 export {
 	Tiers,
-	TiersOptions,
-} from "./classes/buildings/tiers/Tiers.js"
+	type TiersParams,
+} from "./classes/buildings/tiers/Tiers"
 
 //? DistanceTier
 export {
 	DistanceTier,
-	DistanceTierContractors,
-	DistanceTierExtra,
-	DistanceTierFunctions,
-	DistanceTierOptions,
-} from "./classes/buildings/tiers/distance-tiers/DistanceTier.js"
+	type DistanceTierParams,
+} from "./classes/buildings/tiers/distance-tiers/DistanceTier"
 export {
 	DistanceTiers,
-	DistanceTiersOptions,
-} from "./classes/buildings/tiers/distance-tiers/DistanceTiers.js"
+	type DistanceTiersParams,
+} from "./classes/buildings/tiers/distance-tiers/DistanceTiers"
 export {
 	TransportationDistance,
-	TransportationDistanceOptions,
-} from "./classes/buildings/tiers/distance-tiers/TransportationDistance.js"
+	type TransportationDistanceParams,
+} from "./classes/buildings/tiers/distance-tiers/TransportationDistance"
 
 //? OutputTier
 export {
 	OutputTier,
-	OutputTierContractors,
-	OutputTierExtra,
-	OutputTierFunctions,
-	OutputTierOptions,
-} from "./classes/buildings/tiers/output-tiers/OutputTier.js"
+	type OutputTierParams,
+} from "./classes/buildings/tiers/output-tiers/OutputTier"
 export {
 	OutputTiers,
-	OutputTiersOptions,
-} from "./classes/buildings/tiers/output-tiers/OutputTiers.js"
+	type OutputTiersParams,
+} from "./classes/buildings/tiers/output-tiers/OutputTiers"
 export {
 	Factory,
-	FactoryOptions,
-} from "./classes/buildings/tiers/output-tiers/Factory.js"
+	type FactoryParams,
+} from "./classes/buildings/tiers/output-tiers/Factory"
 
 //? SpeedTier
 export {
 	SpeedTier,
-	SpeedTierContractors,
-	SpeedTierExtra,
-	SpeedTierFunctions,
-	SpeedTierOptions,
-} from "./classes/buildings/tiers/speed-tier/SpeedTier.js"
+	type SpeedTierParams,
+} from "./classes/buildings/tiers/speed-tier/SpeedTier"
 export {
 	SpeedTiers,
-	SpeedTiersOptions,
-} from "./classes/buildings/tiers/speed-tier/SpeedTiers.js"
+	type SpeedTiersParams,
+} from "./classes/buildings/tiers/speed-tier/SpeedTiers"
 export {
 	TransportationSpeed,
-	TransportationSpeedOptions,
-} from "./classes/buildings/tiers/speed-tier/TransportationSpeed.js"
+	type TransportationSpeedParams,
+} from "./classes/buildings/tiers/speed-tier/TransportationSpeed"
 
 //? StorageTier
 export {
 	StorageTier,
-	StorageTierContractors,
-	StorageTierExtra,
-	StorageTierFunctions,
-	StorageTierOptions,
-} from "./classes/buildings/tiers/storage-tiers/StorageTier.js"
+	type StorageTierParams,
+} from "./classes/buildings/tiers/storage-tiers/StorageTier"
 export {
 	StorageTiers,
-	StorageTiersOptions,
-} from "./classes/buildings/tiers/storage-tiers/StorageTiers.js"
+	type StorageTiersParams,
+} from "./classes/buildings/tiers/storage-tiers/StorageTiers"
 export {
 	Storage,
-	StorageOptions,
-} from "./classes/buildings/tiers/storage-tiers/Storage.js"
-
-//* Designs
-export {
-	Design,
-	DesignOptions,
-} from "./classes/designs/Design.js"
-export {
-	Requirements,
-	RequirementsOptions,
-	RoboticArmTiers,
-} from "./classes/designs/Requirements.js"
-export {
-	NToM,
-	NToMOptions,
-} from "./classes/designs/NToM.js"
-export {
-	RoboticArmTierDesign,
-	RoboticArmTierDesignOptions,
-} from "./classes/designs/RoboticArmTierDesign.js"
-
+	type StorageParams,
+} from "./classes/buildings/tiers/storage-tiers/Storage"
 
 //// Objects
-export * as currencies from "./objects/currencies.js"
-export * as items from "./objects/items.js"
-export * as technologies from "./objects/technologies.js"
+export * as currencies from "./objects/currencies"
+export * as items from "./objects/items"
+export * as technologies from "./objects/technologies"
 
 // Buildings
-export * as decorations from "./objects/buildings/decorations.js"
-export * as factories from "./objects/buildings/factories.js"
-export * as itemCollectors from "./objects/buildings/item-collectors.js"
-export * as powerPlants from "./objects/buildings/power-plants.js"
-export * as others from "./objects/buildings/storages.js"
-export * as transportations from "./objects/buildings/transportations.js"
-
-// Designs
-export * as balancers from "./objects/designs/balancers.js"
-export * as factorySplitters from "./objects/designs/factory-splitters.js"
-export * as labBalancers from "./objects/designs/lab-balancers.js"
-export * as splitters from "./objects/designs/splitters.js"
-export * as valves from "./objects/designs/valves.js"
+export * as decorations from "./objects/buildings/decorations"
+export * as factories from "./objects/buildings/factories"
+export * as itemCollectors from "./objects/buildings/item-collectors"
+export * as powerPlants from "./objects/buildings/power-plants"
+export * as others from "./objects/buildings/storages"
+export * as transportations from "./objects/buildings/transportations"

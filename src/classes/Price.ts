@@ -2,8 +2,8 @@
  * @author Space.yg
  */
 
-/** The price options. */
-export interface PriceOptions {
+/** The price params. */
+export type PriceParams = {
 	/**
 	 * The amount of gold.
 	 * @default 0
@@ -25,7 +25,7 @@ export class Price {
 	 * @param prices Prices to add.
 	 * @returns Total price.
 	 */
-	static add(...prices: (Price | PriceOptions)[]): Price {
+	static add(...prices: (Price | PriceParams)[]): Price {
 		const total = new Price()
 		for (const price of prices) total.add(price instanceof Price ? price : new Price(price))
 		return total
@@ -36,7 +36,7 @@ export class Price {
 	 * @param prices The prices to compare.
 	 * @returns `true` if all prices are equal, `false` otherwise.
 	 */
-	static equalPrices(...prices: (Price | PriceOptions)[]): boolean {
+	static equalPrices(...prices: (Price | PriceParams)[]): boolean {
 		if (!prices.length) return false
 
 		const basePrice = prices[0] instanceof Price ? prices[0] : new Price(prices[0])
@@ -48,12 +48,12 @@ export class Price {
 	 * The amount of gold.
 	 * @default 0
 	 */
-	gold: NonNullable<PriceOptions["gold"]> | null
+	gold: NonNullable<PriceParams["gold"]> | null
 	/**
 	 * The amount of gems.
 	 * @default 0
 	 */
-	gems: NonNullable<PriceOptions["gems"]> | null
+	gems: NonNullable<PriceParams["gems"]> | null
 
 	//// Constructors
 	/**
@@ -62,26 +62,21 @@ export class Price {
 	constructor()
 	/**
 	 * Construct a {@link Price `Price`} object.
-	 * @param options The price options
+	 * @param params The price parameters
 	 */
-	constructor(options: PriceOptions)
+	constructor(params: PriceParams)
 	/**
 	 * Construct a {@link Price `Price`} object.
 	 * @param price A {@link Price `Price`} object
 	 */
 	constructor(price: Price)
-	/**
-	 * Construct a {@link Price `Price`} object.
-	 * @param price A {@link Price `Price`} object or price options
-	 */
-	constructor(price: Price | PriceOptions)
-	constructor(optionsOrPrice?: Price | PriceOptions) {
-		if (typeof optionsOrPrice === "undefined") {
+	constructor(paramsOrPrice?: Price | PriceParams) {
+		if (typeof paramsOrPrice === "undefined") {
 			this.gold = 0
 			this.gems = 0
 		} else {
-			this.gold = typeof optionsOrPrice.gold === "undefined" ? 0 : optionsOrPrice.gold
-			this.gems = typeof optionsOrPrice.gems === "undefined" ? 0 : optionsOrPrice.gems
+			this.gold = typeof paramsOrPrice.gold === "undefined" ? 0 : paramsOrPrice.gold
+			this.gems = typeof paramsOrPrice.gems === "undefined" ? 0 : paramsOrPrice.gems
 		}
 	}
 

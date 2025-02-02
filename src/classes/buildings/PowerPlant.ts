@@ -7,23 +7,23 @@ import { Area } from "../Area.js"
 import { Base } from "../Base.js"
 
 // Types
-import { type AreaOptions } from "../Area.js"
-import { type BaseOptions } from "../Base.js"
-import { type InputPerMinOptions } from "../Input.js"
+import type { AreaParams } from "../Area.js"
+import type { BaseParams } from "../Base.js"
+import type { InputItemPerMin } from "../Input.d.ts"
 
 /**
- * Options for {@link PowerPlant `PowerPlant`}.
- * @extends {{@link BaseOptions `BaseOptions`}
+ * Parameters for {@link PowerPlant `PowerPlant`}.
+ * @extends {{@link BaseParams `BaseParams`}
  */
-export interface PowerPlantOptions extends BaseOptions {
+export type PowerPlantParams = BaseParams & {
 	/** The input needed to activate the power plant. */
-	input?: InputPerMinOptions
+	input?: InputItemPerMin
 	/** The boost speed that the power plant gives. */
 	speed: number
 	/** The amount of seconds the power plant is active before needing to recharge. */
 	duration: number
 	/** The region of the power plant boost. */
-	region: AreaOptions | Area
+	region: AreaParams | Area
 }
 
 // TODO: Try to resolve the input in power plant
@@ -34,19 +34,12 @@ export interface PowerPlantOptions extends BaseOptions {
 export class PowerPlant extends Base {
 
 	//// Static Properties
-	/** Total power plants that has been created. */
-	static #amount: number = 0
-	/**
-	 * Total power plants that has been created.
-	 * @readonly
-	 */
-	static override get amount(): number { return this.#amount }
 
 	/** 
 	 * All the power plants that has been created.
 	 * @readonly
 	 */
-	static readonly powerPlants: { [/** The name of the power plant. */ name: string]: PowerPlant } = {}
+	static readonly powerPlants: PowerPlant[] = []
 
 	/**
 	 * The description of all power plants.
@@ -56,21 +49,21 @@ export class PowerPlant extends Base {
 
 	//// Object Properties
 	/** The input needed to activate the power plant. */
-	input: PowerPlantOptions["input"]
+	input: PowerPlantParams["input"]
 	/** The boost speed that the power plant gives. */
-	speed: PowerPlantOptions["speed"]
+	speed: PowerPlantParams["speed"]
 	/** The amount of seconds the power plant is active before needing to recharge. */
-	duration: PowerPlantOptions["duration"]
+	duration: PowerPlantParams["duration"]
 	/** The region of the power plant boost. */
 	region: Area
 
 	//// Constructors
 	/**
 	 * Constructs a new {@link PowerPlant `PowerPlant`} object.
-	 * @param options The power plant options.
-	 * @param passByReference Whether to pass the objects in {@link options `options`} by reference or not. Default is `true`.
+	 * @param params The power plant parameters.
+	 * @param passByReference Whether to pass the objects in {@link params `params`} by reference or not. Default is `true`.
 	 */
-	constructor(options: PowerPlantOptions, passByReference?: boolean)
+	constructor(params: PowerPlantParams, passByReference?: boolean)
 	/**s
 	 * Constructs a new {@link PowerPlant `PowerPlant`} object.
 	 * @param powerPlant A {@link PowerPlant `PowerPlant`} object.
@@ -79,22 +72,21 @@ export class PowerPlant extends Base {
 	constructor(powerPlant: PowerPlant, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link PowerPlant `PowerPlant`} object.
-	 * @param powerPlant A {@link PowerPlant `PowerPlant`} object or power plant options.
+	 * @param powerPlant A {@link PowerPlant `PowerPlant`} object or power plant parameters.
 	 * @param passByReference Whether to pass the objects in {@link powerPlant `powerPlant`} by reference or not. Default is `true`.
 	 */
-	constructor(powerPlant: PowerPlant | PowerPlantOptions, passByReference?: boolean)
-	constructor(optionsOrPowerPlant: PowerPlant | PowerPlantOptions, passByReference: boolean = true) {
-		super(optionsOrPowerPlant, passByReference)
+	constructor(powerPlant: PowerPlant | PowerPlantParams, passByReference?: boolean)
+	constructor(paramsOrPowerPlant: PowerPlant | PowerPlantParams, passByReference: boolean = true) {
+		super(paramsOrPowerPlant, passByReference)
 
-		this.image = optionsOrPowerPlant.image ?? this.image + `power-plants/${this.name}.png`
-		this.input = optionsOrPowerPlant.input
-		this.speed = optionsOrPowerPlant.speed
-		this.duration = optionsOrPowerPlant.duration
-		this.region = passByReference && optionsOrPowerPlant.region instanceof Area ? optionsOrPowerPlant.region : new Area(optionsOrPowerPlant.region)
+		this.image = paramsOrPowerPlant.image ?? this.image + `power-plants/${this.name}.png`
+		this.input = paramsOrPowerPlant.input
+		this.speed = paramsOrPowerPlant.speed
+		this.duration = paramsOrPowerPlant.duration
+		this.region = passByReference && paramsOrPowerPlant.region instanceof Area ? paramsOrPowerPlant.region : new Area(paramsOrPowerPlant.region)
 
 		// Static
-		PowerPlant.#amount++
-		PowerPlant.powerPlants[optionsOrPowerPlant.name] = this
+		PowerPlant.powerPlants.push(this)
 	}
 
 	//// Object Methods

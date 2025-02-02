@@ -3,66 +3,81 @@
  */
 
 // Classes
-import { Tier } from "../Tier.js"
+import { Tier } from "../Tier"
 
 // Types
-import { type TierOptions } from "../Tier.js"
-import { type RemoveFunctions } from "../../../../helpers.js"
+import type { TierParams } from "../Tier"
 
-/** Extra options for storage tier. */
-export interface StorageTierExtra {
+/**
+ * Parameters for a storage tier.
+ * @extends {{@link TierParams `TierParams`}
+ */
+export type StorageTierParams = TierParams & {
 	/** The storage at this tier. */
 	storage: number
 }
 
-/** Constructors for storage tier. */
-export interface StorageTierContractors {
+/**
+ * A distance tier.
+ * @extends {{@link Tier `Tier`}
+ */
+export class StorageTier extends Tier {
+
+	//// Object Properties
+
+	/** The output at this tier. */
+	storage: StorageTierParams["storage"]
+
+	//// Constructors
+
 	/**
 	 * Constructs a new {@link StorageTier `StorageTier`} object.
-	 * @param options The storage tier options.
+	 * @param params The storage tier parameters.
 	 */
-	new(options: StorageTierOptions): StorageTier
+	constructor(params: StorageTierParams)
 	/**
 	 * Constructs a new {@link StorageTier `StorageTier`} object.
 	 * @param storageTier A {@link StorageTier `StorageTier`} object.
 	 */
-	new(storageTier: StorageTier): StorageTier
+	constructor(storageTier: StorageTier)
 	/**
 	 * Constructs a new {@link StorageTier `StorageTier`} object.
-	 * @param storageTier A {@link StorageTier `StorageTier`} object or storage tier options.
+	 * @param storageTier A {@link StorageTier `StorageTier`} object or storage tier parameters.
 	 */
-	new(storageTier: StorageTier | StorageTierOptions): StorageTier
-}
+	constructor(paramsOrStorageTier: StorageTier | StorageTierParams) {
+		super(paramsOrStorageTier)
 
-/**
- * Functions for storage tier.
- * @extends {{@link Tier `Tier`}
- */
-export interface StorageTierFunctions extends Tier {
+		this.storage = paramsOrStorageTier.storage
+	}
+
+	//// Object Methods
+
+	/**
+	 * These are similarities between the {@link equals `equals`} and {@link strictlyEquals `strictlyEquals`} methods.
+	 * @param distanceTier The other {@link StorageTier `StorageTier`} object.
+	 * @returns `true` if both {@link StorageTier `StorageTier`} objects are the equal in the properties that are similar between the {@link equals `equals`} and {@link strictlyEquals `strictlyEquals`} methods, `false` otherwise.
+	 */
+	protected override similarEquals(storageTier: StorageTier): boolean {
+		return this.storage === storageTier.storage
+	}
+
 	/**
 	 * Determine if this {@link StorageTier `StorageTier`} object is equal to another {@link StorageTier `StorageTier`} object.
 	 * @param storageTier The other {@link StorageTier `StorageTier`} object.
 	 * @returns `true` if both {@link StorageTier `StorageTier`} objects are equal, `false` otherwise.
 	 */
-	equals(storageTier: StorageTier): boolean
+	override equals(storageTier: StorageTier): boolean {
+		return super.equals(storageTier)
+			&& this.similarEquals(storageTier)
+	}
 
 	/**
 	 * Determine if this {@link StorageTier `StorageTier`} object is strictly equal to another {@link StorageTier `StorageTier`} object.
 	 * @param storageTier The other {@link StorageTier `StorageTier`} object.
 	 * @returns `true` if both {@link StorageTier `StorageTier`} objects are strictly equal, `false` otherwise.
 	 */
-	strictlyEquals(storageTier: StorageTier): boolean
+	override strictlyEquals(storageTier: StorageTier): boolean {
+		return super.strictlyEquals(storageTier)
+			&& this.similarEquals(storageTier)
+	}
 }
-
-/**
- * Options for a storage tier.
- * @extends {{@link TierOptions `TierOptions`}
- */
-export type StorageTierOptions = TierOptions<StorageTierExtra>
-
-/**
- * Construct a new {@link StorageTier `StorageTier`}.
- * @extends {{@link Tier `Tier`}
- */
-export type StorageTier = RemoveFunctions<Tier> & StorageTierExtra & StorageTierFunctions
-export const StorageTier = Tier as unknown as StorageTierContractors

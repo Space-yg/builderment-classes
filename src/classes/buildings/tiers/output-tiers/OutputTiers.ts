@@ -3,18 +3,18 @@
  */
 
 // Classes
-import { Tiers } from "../Tiers.js"
-import { OutputTier } from "./OutputTier.js"
+import { Tiers } from "../Tiers"
+import { OutputTier } from "./OutputTier"
 
 // Types
-import { type TiersOptions } from "../Tiers.js"
-import { type OutputTierOptions } from "./OutputTier.js"
+import type { TiersParams } from "../Tiers"
+import type { OutputTierParams } from "./OutputTier"
 
 /**
- * Options for output tiers.
- * @extends {{@link TiersOptions `TiersOptions`}
+ * The parameters of the optional output tiers.
+ * @extends {{@link TiersParams `TiersParams`}
  */
-export type OutputTiersOptions = TiersOptions<OutputTierOptions, OutputTier>
+export type OutputTiersParams = TiersParams<OutputTierParams, OutputTier>
 
 /**
  * Make a new output tier.
@@ -23,17 +23,19 @@ export type OutputTiersOptions = TiersOptions<OutputTierOptions, OutputTier>
 export class OutputTiers extends Tiers {
 
 	//// Object Properties
+
 	declare tiers: { [/** The tiers. They must be consecutive integers. */ tier: number]: OutputTier }
 	override get maxTier(): OutputTier { return this.tiers[this.maxTierNum] }
 	override get minTier(): OutputTier { return this.tiers[this.minTierNum] }
 
 	//// Constructors
+
 	/**
 	 * Constructs a new {@link OutputTiers `OutputTiers`} object.
-	 * @param options The output tier options.
-	 * @param passByReference Whether to pass the objects in the {@link options `options`} by reference or not. Default is `true`.
+	 * @param params The output tier parameters.
+	 * @param passByReference Whether to pass the objects in the {@link params `params`} by reference or not. Default is `true`.
 	 */
-	constructor(options: OutputTiersOptions, passByReference?: boolean)
+	constructor(params: OutputTiersParams, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link OutputTiers `OutputTiers`} object.
 	 * @param outputTiers An {@link OutputTiers `OutputTiers`} object.
@@ -42,23 +44,23 @@ export class OutputTiers extends Tiers {
 	constructor(outputTiers: OutputTiers, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link OutputTiers `OutputTiers`} object.
-	 * @param outputTiers An {@link OutputTiers `OutputTiers`} object or output tier options.
+	 * @param outputTiers An {@link OutputTiers `OutputTiers`} object or output tier parameters.
 	 * @param passByReference Whether to pass the objects in the {@link outputTiers `outputTiers`} by reference or not. Default is `true`.
 	 */
-	constructor(outputTiers: OutputTiers | OutputTiersOptions, passByReference?: boolean)
-	constructor(optionsOrOutputTiers: OutputTiers | OutputTiersOptions, passByReference: boolean = true) {
-		super(optionsOrOutputTiers, passByReference)
+	constructor(outputTiers: OutputTiers | OutputTiersParams, passByReference?: boolean)
+	constructor(paramsOrOutputTiers: OutputTiers | OutputTiersParams, passByReference: boolean = true) {
+		super(paramsOrOutputTiers, passByReference)
 
 		// Make all Tier to OutputTier
 		// OutputTiers
-		if (optionsOrOutputTiers instanceof OutputTiers) {
-			if (passByReference) this.tiers = optionsOrOutputTiers.tiers
-			else for (const tier in this.tiers) this.tiers[tier] = new OutputTier(optionsOrOutputTiers.tiers[tier])
+		if (paramsOrOutputTiers instanceof OutputTiers) {
+			if (passByReference) this.tiers = paramsOrOutputTiers.tiers
+			else for (const tier in this.tiers) this.tiers[tier] = new OutputTier(paramsOrOutputTiers.tiers[tier])
 		}
-		// OutputTiersOptions
+		// OutputTiersParams
 		else {
 			for (const tier in this.tiers) {
-				const t = optionsOrOutputTiers[tier]
+				const t = paramsOrOutputTiers[tier]
 				if (t instanceof OutputTier) this.tiers[tier] = passByReference ? t : new OutputTier(t)
 				else this.tiers[tier] = new OutputTier(t)
 			}
@@ -66,6 +68,7 @@ export class OutputTiers extends Tiers {
 	}
 
 	//// Object Methods
+
 	/**
 	 * These are similarities between the {@link equals `equals`} and {@link strictlyEquals `strictlyEquals`} methods.
 	 * @param outputTiers The other {@link OutputTiers `OutputTiers`} object.

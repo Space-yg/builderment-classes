@@ -3,20 +3,20 @@
  */
 
 // Classes
-import { Price } from "../../../Price.js"
-import { SpeedTiers } from "./SpeedTiers.js"
+import { SpeedTiers } from "./SpeedTiers"
 
 // Types
-import { type SpeedTiersOptions } from "./SpeedTiers.js"
+import type { Price } from "@/classes/Price"
+import type { SpeedTiersParams } from "./SpeedTiers"
 
-/** Options for {@link TransportationSpeed `TransportationSpeed`}. */
-export interface TransportationSpeedOptions {
+/** Parameters for {@link TransportationSpeed `TransportationSpeed`}. */
+export type TransportationSpeedParams = {
 	/** The name of the transportation speed. */
 	name: string
 	/** The description of the transportation speed. */
 	description: string
 	/** The tiers of the transportation speed. */
-	tiers: SpeedTiersOptions | SpeedTiers
+	tiers: SpeedTiersParams | SpeedTiers
 }
 
 /**
@@ -26,34 +26,30 @@ export interface TransportationSpeedOptions {
 export class TransportationSpeed extends SpeedTiers {
 
 	//// Static properties
-	/** Total transportations that has been created. */
-	static #amount = 0
-	/**
-	 * Total transportations that has been created.
-	 * @readonly
-	 */
-	static get amount() { return this.#amount }
+
 	/**
 	 * All the transportations that has been created.
 	 * @readonly
 	 */
-	static readonly transportationSpeeds: { [/** The name of the transportation. */ name: string]: TransportationSpeed } = {}
+	static readonly transportationSpeeds: TransportationSpeed[] = []
 
-	//// Properties
+	//// Object Properties
+
 	/** The name of the transportation. */
-	name: TransportationSpeedOptions["name"]
+	name: TransportationSpeedParams["name"]
 	/** The price of the first tier of the transportation. */
 	price: Price
 	/** The description of the transportation. */
-	description: TransportationSpeedOptions["description"]
+	description: TransportationSpeedParams["description"]
 
 	//// Constructors
+
 	/**
 	 * Constructs a new {@link TransportationSpeed `TransportationSpeed`} object.
-	 * @param options The transportation options
+	 * @param params The transportation parameters
 	 * @param passByReference Whether to pass the objects in the {@link TransportationSpeed `TransportationSpeed`} by reference or not. Default is `true`.
 	 */
-	constructor(options: TransportationSpeedOptions, passByReference?: boolean)
+	constructor(params: TransportationSpeedParams, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link TransportationSpeed `TransportationSpeed`} object.
 	 * @param transportation A {@link TransportationSpeed `TransportationSpeed`} object.
@@ -62,30 +58,30 @@ export class TransportationSpeed extends SpeedTiers {
 	constructor(transportation: TransportationSpeed, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link TransportationSpeed `TransportationSpeed`} object.
-	 * @param transportation A {@link TransportationSpeed `TransportationSpeed`} object or transportation options.
+	 * @param transportation A {@link TransportationSpeed `TransportationSpeed`} object or transportation parameters.
 	 * @param passByReference Whether to pass the objects in the {@link TransportationSpeed `TransportationSpeed`} by reference or not. Default is `true`.
 	 */
-	constructor(transportation: TransportationSpeed | TransportationSpeedOptions, passByReference?: boolean)
-	constructor(optionsOrTransportation: TransportationSpeed | TransportationSpeedOptions, passByReference: boolean = true) {
-		super(optionsOrTransportation.tiers, passByReference)
+	constructor(transportation: TransportationSpeed | TransportationSpeedParams, passByReference?: boolean)
+	constructor(paramsOrTransportation: TransportationSpeed | TransportationSpeedParams, passByReference: boolean = true) {
+		super(paramsOrTransportation.tiers, passByReference)
 
-		this.name = optionsOrTransportation.name
+		this.name = paramsOrTransportation.name
 		this.price = this.tiers[this.minTierNum].price
-		this.description = optionsOrTransportation.description
+		this.description = paramsOrTransportation.description
 
 		// Image
-		if (optionsOrTransportation instanceof TransportationSpeed) for (const tier in this.tiers) this.tiers[tier].image = optionsOrTransportation.tiers[tier].image ?? this.tiers[tier].image + `transportations/${this.name === "Robotic Arm" ? `${this.name} Tier ${tier}` : this.name}.png`
+		if (paramsOrTransportation instanceof TransportationSpeed) for (const tier in this.tiers) this.tiers[tier].image = paramsOrTransportation.tiers[tier].image ?? this.tiers[tier].image + `transportations/${this.name === "Robotic Arm" ? `${this.name} Tier ${tier}` : this.name}.png`
 		else {
-			if (optionsOrTransportation.tiers instanceof SpeedTiers) for (const tier in this.tiers) this.tiers[tier].image = optionsOrTransportation.tiers.tiers[tier].image ?? this.tiers[tier].image + `transportations/${this.name === "Robotic Arm" ? `${this.name} Tier ${tier}` : this.name}.png`
-			else for (const tier in this.tiers) this.tiers[tier].image = optionsOrTransportation.tiers[tier].image ?? this.tiers[tier].image + `transportations/${this.name === "Robotic Arm" ? `${this.name} Tier ${tier}` : this.name}.png`
+			if (paramsOrTransportation.tiers instanceof SpeedTiers) for (const tier in this.tiers) this.tiers[tier].image = paramsOrTransportation.tiers.tiers[tier].image ?? this.tiers[tier].image + `transportations/${this.name === "Robotic Arm" ? `${this.name} Tier ${tier}` : this.name}.png`
+			else for (const tier in this.tiers) this.tiers[tier].image = paramsOrTransportation.tiers[tier].image ?? this.tiers[tier].image + `transportations/${this.name === "Robotic Arm" ? `${this.name} Tier ${tier}` : this.name}.png`
 		}
 
 		// Statics
-		TransportationSpeed.#amount++
-		TransportationSpeed.transportationSpeeds[optionsOrTransportation.name] = this
+		TransportationSpeed.transportationSpeeds.push(this)
 	}
 
 	//// Object Methods
+
 	/**
 	 * These are similarities between the {@link equals `equals`} and {@link strictlyEquals `strictlyEquals`} methods.
 	 * @param transportationSpeed The other {@link TransportationSpeed `TransportationSpeed`} object.

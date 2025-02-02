@@ -3,82 +3,84 @@
  */
 
 // Classes
-import { objToString, RemoveFunctions } from "../../../helpers.js"
-import { Price } from "../../Price.js"
+import { Price } from "@/classes/Price"
+
+// Functions
+import { objToString } from "@/utils/helpers"
 
 // Types
-import { type PriceOptions } from "../../Price.js"
+import type { PriceParams } from "@/classes/Price"
 
-/** Optional options for a tier */
-export type TierOptions<Extra extends object = {}> = {
+/** Optional parameters for a tier */
+export type TierParams = {
 	/**
 	 * The price of that tier.
 	 * @default
-	 * ```javascript
-	 * Price({
-	 * 	gold: 0,
-	 * 	gems: 0,
-	 * })
-	 * ```
-	*/
-	price?: Price | PriceOptions
-	/**
-	 * The relative path or URL to the image of this tier.
-	 * @default "./resources/"
-	 */
-	image?: string
-} & Extra
-
-/** Make a new tier. */
-export class Tier {
-
-	//// Object Properties
-	/**
-	 * The price of that tier.
-	 * @default 
 	 * ```javascript
 	 * new Price({
 	 * 	gold: 0,
 	 * 	gems: 0,
 	 * })
 	 * ```
+	*/
+	price?: Price | PriceParams
+	/**
+	 * The relative path or URL to the image of this tier.
+	 * @default "./resources/"
+	 */
+	image?: string
+}
+
+/** Make a new tier. */
+export class Tier {
+
+	//// Object Properties
+
+	/**
+	 * The price of that tier.
+	 * @default 
+	 * new Price({
+	 * 	gold: 0,
+	 * 	gems: 0,
+	 * })
 	 */
 	price: Price
 	/**
 	 * The relative path or URL to the image of this tier.
 	 * @default "./resources/"
 	 */
-	image: NonNullable<TierOptions["image"]>
+	image: NonNullable<TierParams["image"]>
 
 	//// Constructors
+
 	/**
 	 * Construct a {@link Tier `Tier`} object.
-	 * @param options The tier options.
+	 * @param params The tier parameters.
 	 */
-	constructor(options: TierOptions)
+	constructor(params: TierParams)
 	/**
 	 * Construct a {@link Tier `Tier`} object.
 	 * @param tier A {@link Tier `Tier`} object.
 	 */
 	constructor(tier: Tier)
-	/**
+	/**x
 	 * Construct a {@link Tier `Tier`} object.
-	 * @param tier A {@link Tier `Tier`} object or tier options.
+	 * @param tier A {@link Tier `Tier`} object or tier parameters.
 	 */
-	constructor(tier: Tier | TierOptions)
-	constructor(optionsOrTier: Tier | TierOptions) {
-		this.price = optionsOrTier.price instanceof Price ? optionsOrTier.price : typeof optionsOrTier.price === "undefined" ? new Price() : new Price(optionsOrTier.price)
-		this.image = optionsOrTier.image ?? "./resources/"
+	constructor(paramsOrTier: Tier | TierParams) {
+		this.price = paramsOrTier.price instanceof Price ? paramsOrTier.price : typeof paramsOrTier.price === "undefined" ? new Price() : new Price(paramsOrTier.price)
+		this.image = paramsOrTier.image ?? "./resources/"
 
 		// Add the rest of the properties
-		for (const option in optionsOrTier) {
-			if ((["price", "image"].indexOf(option) + 1)) continue
+		for (const param in paramsOrTier) {
+			if ((["price", "image"].indexOf(param) + 1)) continue
 			// @ts-ignore
-			this[option as keyof Tier] = optionsOrTier[option]
+			this[param as keyof Tier] = paramsOrTier[param]
 		}
 	}
 
 	//// Object Methods
+
 	/**
 	 * Converts the tier into string.
 	 * @param limit The limit of how many tabs can be used. `limit` must be greater than `0`. Default is `2`.
@@ -106,16 +108,6 @@ export class Tier {
 	equals(tier: Tier): boolean {
 		if (this === tier) return true
 
-		for (const property in this) if (!(["price", "image"].indexOf(property) + 1)) {
-			const value = this[property as keyof RemoveFunctions<Tier>]
-			if (["string", "bigint", "boolean", "number", "undefined"].indexOf(typeof value) + 1 && value !== tier[property as keyof Tier]) return false
-			else if (typeof value === "object") {
-				// @ts-ignore
-				if (Object.hasOwn(value, "equals") && !value.equals(tier[property])) return false
-				else if (value !== tier[property as keyof Tier]) return false
-			}
-		}
-
 		return this.similarEquals(tier)
 	}
 
@@ -126,18 +118,6 @@ export class Tier {
 	 */
 	strictlyEquals(tier: Tier): boolean {
 		if (this === tier) return true
-
-		for (const property in this) if (!(["price", "image"].indexOf(property) + 1)) {
-			const value = this[property as keyof RemoveFunctions<Tier>]
-			if (["string", "bigint", "boolean", "number", "undefined"].indexOf(typeof value) + 1 && value !== tier[property as keyof Tier]) return false
-			else if (typeof value === "object") {
-				// @ts-ignore
-				if (Object.hasOwn(value, "strictlyEquals") && !value.strictlyEquals(tier[property])) return false
-				// @ts-ignore
-				else if (Object.hasOwn(value, "equals") && !value.equals(tier[property])) return false
-				else if (value !== tier[property as keyof Tier]) return false
-			}
-		}
 
 		return this.similarEquals(tier)
 			&& this.image === tier.image

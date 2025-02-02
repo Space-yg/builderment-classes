@@ -3,18 +3,18 @@
  */
 
 // Classes
-import { Tiers } from "../Tiers.js"
-import { StorageTier } from "./StorageTier.js"
+import { Tiers } from "../Tiers"
+import { StorageTier } from "./StorageTier"
 
 // Types
-import { type TiersOptions } from "../Tiers.js"
-import { type StorageTierOptions } from "./StorageTier.js"
+import type { TiersParams } from "../Tiers"
+import type { StorageTierParams } from "./StorageTier"
 
 /**
- * The options of the optional tiers.
- * @extends {{@link TiersOptions `TiersOptions`}
+ * The parameters of the optional storage tiers.
+ * @extends {{@link TiersParams `TiersParams`}
  */
-export type StorageTiersOptions = TiersOptions<StorageTierOptions, StorageTier>
+export type StorageTiersParams = TiersParams<StorageTierParams, StorageTier>
 
 /**
  * Make a new {@link StorageTier `StorageTier`}.
@@ -23,43 +23,45 @@ export type StorageTiersOptions = TiersOptions<StorageTierOptions, StorageTier>
 export class StorageTiers extends Tiers {
 
 	//// Object Properties
+
 	declare tiers: { [/** The tiers. They must be consecutive integers. */ tier: number]: StorageTier }
 	override get maxTier(): StorageTier { return this.tiers[this.maxTierNum] }
 	override get minTier(): StorageTier { return this.tiers[this.minTierNum] }
 
 	//// Constructors
+
 	/**
 	 * Constructs a new {@link StorageTiers `StorageTiers`} object.
-	 * @param options The tier options.
-	 * @param passByReference Whether to pass the objects in the {@link StorageTiers `StorageTiers`} by reference or not. Default is `true`.
+	 * @param params The tier parameters.
+	 * @param passByReference Whether to pass the objects in the {@link params `params`} by reference or not. Default is `true`.
 	 */
-	constructor(options: StorageTiersOptions, passByReference?: boolean)
+	constructor(params: StorageTiersParams, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link StorageTiers `StorageTiers`} object.
-	 * @param options A {@link StorageTiers `StorageTiers`} object.
+	 * @param storageTiers A {@link StorageTiers `StorageTiers`} object.
 	 * @param passByReference Whether to pass the objects in the {@link StorageTiers `StorageTiers`} by reference or not. Default is `true`.
 	 */
 	constructor(storageTiers: StorageTiers, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link StorageTiers `StorageTiers`} object.
-	 * @param storageTiers A {@link StorageTiers `StorageTiers`} object or tier options.
+	 * @param storageTiers A {@link StorageTiers `StorageTiers`} object or tier parameters.
 	 * @param passByReference Whether to pass the objects in the {@link StorageTiers `StorageTiers`} by reference or not. Default is `true`.
 	 */
-	constructor(storageTiers: StorageTiers | StorageTiersOptions, passByReference?: boolean)
-	constructor(optionsOrStorageTiers: StorageTiers | StorageTiersOptions, passByReference: boolean = true) {
-		super(optionsOrStorageTiers, passByReference)
+	constructor(storageTiers: StorageTiers | StorageTiersParams, passByReference?: boolean)
+	constructor(paramsOrStorageTiers: StorageTiers | StorageTiersParams, passByReference: boolean = true) {
+		super(paramsOrStorageTiers, passByReference)
 
 		// StorageTiers
-		if (optionsOrStorageTiers instanceof StorageTiers) {
+		if (paramsOrStorageTiers instanceof StorageTiers) {
 			// Make all Tier to StorageTiers
-			if (passByReference) this.tiers = optionsOrStorageTiers.tiers
-			else for (const tier in this.tiers) this.tiers[tier] = new StorageTier(optionsOrStorageTiers.tiers[tier])
+			if (passByReference) this.tiers = paramsOrStorageTiers.tiers
+			else for (const tier in this.tiers) this.tiers[tier] = new StorageTier(paramsOrStorageTiers.tiers[tier])
 		}
-		// StorageTiersOptions
+		// StorageTiersParams
 		else {
 			// Make all Tier to StorageTiers
 			for (const tier in this.tiers) {
-				const t = optionsOrStorageTiers[tier]
+				const t = paramsOrStorageTiers[tier]
 				if (t instanceof StorageTier) this.tiers[tier] = passByReference ? t : new StorageTier(t)
 				else this.tiers[tier] = new StorageTier(t)
 			}
@@ -67,6 +69,7 @@ export class StorageTiers extends Tiers {
 	}
 
 	//// Object Methods
+
 	/**
 	 * These are similarities between the {@link equals `equals`} and {@link strictlyEquals `strictlyEquals`} methods.
 	 * @param storageTiers The other {@link StorageTiers `StorageTiers`} object.

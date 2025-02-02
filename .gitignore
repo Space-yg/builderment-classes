@@ -1,13 +1,2 @@
-#! I'm not sure what are those, but do not remove them
-/index.html
-/index.css
-
-#* Remove when wiki is done
-/resources/font
-/wiki
-
-# Tests
-/src/index.html
-/src/test.ts
-/dir/test.js
-/save-files
+/node_modules
+/dist

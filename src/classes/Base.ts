@@ -6,17 +6,17 @@
 import { Price } from "./Price.js"
 
 // Functions
-import { objToString } from "../helpers.js"
+import { objToString } from "../utils/helpers.js"
 
 // Types
-import { type PriceOptions } from "./Price.js"
+import type { PriceParams } from "./Price.js"
 
-/** The base options. */
-export interface BaseOptions {
+/** The base parameters. */
+export type BaseParams = {
 	/** The name. */
 	name: string
 	/** The price. */
-	price: Price | PriceOptions
+	price: Price | PriceParams
 	/**
 	 * URL or relative path to the image.
 	 * @default "./resources/"
@@ -29,17 +29,8 @@ export interface BaseOptions {
 export class Base {
 
 	//// Static properties
-	//* Private
-	/** Total bases that has been created. */
-	static #amount: number = 0
 
 	//* Public
-	/**
-	 * Total bases that has been created.
-	 * @readonly
-	 */
-	static get amount() { return this.#amount }
-
 	/**
 	 * All the bases that has been created.
 	 * @readonly
@@ -47,22 +38,24 @@ export class Base {
 	static readonly bases: { [/** The name. */ name: string]: Base[] } = {}
 
 	//// Object Properties
+
 	/** The name. */
-	name: BaseOptions["name"]
+	name: BaseParams["name"]
 	/** The price. */
 	price: Price
 	/**
 	 * URL or relative path to the image.
 	 * @default "./resources/"
 	 */
-	image: NonNullable<BaseOptions["image"]>
+	image: NonNullable<BaseParams["image"]>
 
 	//// Constructors
+
 	/**
 	 * Constructs a {@link Base `Base`} object.
-	 * @param options The base options.
+	 * @param params The base parameters.
 	 */
-	constructor(options: BaseOptions)
+	constructor(params: BaseParams)
 	/**
 	 * Constructs a {@link Base `Base`} object.
 	 * @param base A {@link Base `Base`} object.
@@ -71,20 +64,19 @@ export class Base {
 	constructor(base: Base, passByReference?: boolean)
 	/**
 	 * Constructs a {@link Base `Base`} object.
-	 * @param base A {@link Base `Base`} object or base options.
+	 * @param base A {@link Base `Base`} object or base parameters.
 	 * @param passByReference Whether to pass the objects in {@link base `base`} by reference or not. Default is `true`.
 	 */
-	constructor(base: Base | BaseOptions, passByReference?: boolean)
-	constructor(baseOrOptions: Base | BaseOptions, passByReference: boolean = true) {
-		this.name = baseOrOptions.name
-		if (passByReference && baseOrOptions instanceof Base) this.price = baseOrOptions.price
-		else this.price = new Price(baseOrOptions.price)
-		this.image = baseOrOptions.image ?? "./resources/"
+	constructor(base: Base | BaseParams, passByReference?: boolean)
+	constructor(baseOrParams: Base | BaseParams, passByReference: boolean = true) {
+		this.name = baseOrParams.name
+		if (passByReference && baseOrParams instanceof Base) this.price = baseOrParams.price
+		else this.price = new Price(baseOrParams.price)
+		this.image = baseOrParams.image ?? "./resources/"
 
 		// Statics
-		Base.#amount++
-		if (typeof Base.bases[baseOrOptions.name] === "undefined") Base.bases[baseOrOptions.name] = [this]
-		else Base.bases[baseOrOptions.name].push(this)
+		if (typeof Base.bases[baseOrParams.name] === "undefined") Base.bases[baseOrParams.name] = [this]
+		else Base.bases[baseOrParams.name].push(this)
 	}
 
 	//// Object Methods

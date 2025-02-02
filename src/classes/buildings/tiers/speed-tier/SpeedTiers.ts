@@ -3,18 +3,18 @@
  */
 
 // Classes
-import { Tiers } from "../Tiers.js"
-import { SpeedTier } from "./SpeedTier.js"
+import { Tiers } from "../Tiers"
+import { SpeedTier } from "./SpeedTier"
 
 // Types
-import { type TiersOptions } from "../Tiers.js"
-import { type SpeedTierOptions } from "./SpeedTier.js"
+import type { TiersParams } from "../Tiers"
+import type { SpeedTierParams } from "./SpeedTier"
 
 /**
- * The options of the optional tiers.
- * @extends {{@link TiersOptions `TiersOptions`}
+ * The parameters of the optional speed tiers.
+ * @extends {{@link TiersParams `TiersParams`}
  */
-export type SpeedTiersOptions = TiersOptions<SpeedTierOptions, SpeedTier>
+export type SpeedTiersParams = TiersParams<SpeedTierParams, SpeedTier>
 
 /**
  * Make a new speed tiers.
@@ -23,43 +23,45 @@ export type SpeedTiersOptions = TiersOptions<SpeedTierOptions, SpeedTier>
 export class SpeedTiers extends Tiers {
 
 	//// Object Properties
+
 	declare tiers: { [/** The tiers. They must be consecutive integers. */ tier: number]: SpeedTier }
 	override get maxTier(): SpeedTier { return this.tiers[this.maxTierNum] }
 	override get minTier(): SpeedTier { return this.tiers[this.minTierNum] }
 
 	//// Constructors
+
 	/**
 	 * Constructs a new {@link SpeedTiers `StorageTiers`} object.
-	 * @param options The tier options.
-	 * @param passByReference Whether to pass the objects in the {@link SpeedTiers `StorageTiers`} by reference or not. Default is `true`.
+	 * @param params The tier parameters.
+	 * @param passByReference Whether to pass the objects in the {@link params `params`} by reference or not. Default is `true`.
 	 */
-	constructor(options: SpeedTiersOptions, passByReference?: boolean)
+	constructor(params: SpeedTiersParams, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link SpeedTiers `StorageTiers`} object.
-	 * @param options A {@link SpeedTiers `StorageTiers`} object.
+	 * @param speedTiers A {@link SpeedTiers `StorageTiers`} object.
 	 * @param passByReference Whether to pass the objects in the {@link SpeedTiers `StorageTiers`} by reference or not. Default is `true`.
 	 */
 	constructor(speedTiers: SpeedTiers, passByReference?: boolean)
 	/**
 	 * Constructs a new {@link SpeedTiers `StorageTiers`} object.
-	 * @param speedTiers A {@link SpeedTiers `StorageTiers`} object or tier options.
+	 * @param speedTiers A {@link SpeedTiers `StorageTiers`} object or tier parameters.
 	 * @param passByReference Whether to pass the objects in the {@link SpeedTiers `StorageTiers`} by reference or not. Default is `true`.
 	 */
-	constructor(speedTiers: SpeedTiers | SpeedTiersOptions, passByReference?: boolean)
-	constructor(optionsOrStorageTiers: SpeedTiers | SpeedTiersOptions, passByReference: boolean = true) {
-		super(optionsOrStorageTiers, passByReference)
+	constructor(speedTiers: SpeedTiers | SpeedTiersParams, passByReference?: boolean)
+	constructor(paramsOrStorageTiers: SpeedTiers | SpeedTiersParams, passByReference: boolean = true) {
+		super(paramsOrStorageTiers, passByReference)
 
 		// StorageTiers
-		if (optionsOrStorageTiers instanceof SpeedTiers) {
+		if (paramsOrStorageTiers instanceof SpeedTiers) {
 			// Make all Tier to StorageTiers
-			if (passByReference) this.tiers = optionsOrStorageTiers.tiers
-			else for (const tier in this.tiers) this.tiers[tier] = new SpeedTier(optionsOrStorageTiers.tiers[tier])
+			if (passByReference) this.tiers = paramsOrStorageTiers.tiers
+			else for (const tier in this.tiers) this.tiers[tier] = new SpeedTier(paramsOrStorageTiers.tiers[tier])
 		}
-		// StorageTiersOptions
+		// SpeedTiersParams
 		else {
 			// Make all Tier to StorageTiers
 			for (const tier in this.tiers) {
-				const t = optionsOrStorageTiers[tier]
+				const t = paramsOrStorageTiers[tier]
 				if (t instanceof SpeedTier) this.tiers[tier] = passByReference ? t : new SpeedTier(t)
 				else this.tiers[tier] = new SpeedTier(t)
 			}
@@ -67,6 +69,7 @@ export class SpeedTiers extends Tiers {
 	}
 
 	//// Object Methods
+
 	/**
 	 * These are similarities between the {@link equals `equals`} and {@link strictlyEquals `strictlyEquals`} methods.
 	 * @param speedTiers The other {@link SpeedTiers `StorageTiers`} object.

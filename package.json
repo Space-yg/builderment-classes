@@ -1,19 +1,22 @@
 {
 	"name": "builderment-classes",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"description": "A library full of all Builderment classes and objects needed to make your own Builderment-related project!",
-	"type": "module",
-	"main": "./dir/index.js",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsc"
+		"build": "tsup",
+		"watch": "tsup --watch",
+		"publish": "tsup & npm publish"
 	},
 	"author": "Space.yg",
-	"license": "MIT",
 	"keywords": [
 		"builderment",
 		"classes",
 		"library"
 	],
+	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Space-yg/builderment-classes.git"
@@ -21,5 +24,12 @@
 	"bugs": {
 		"url": "https://github.com/Space-yg/builderment-classes/issues"
 	},
-	"homepage": "https://github.com/Space-yg/builderment-classes#readme"
+	"homepage": "https://github.com/Space-yg/builderment-classes#readme",
+	"devDependencies": {
+		"tsup": "^8.3.6",
+		"typescript": "^5.7.3"
+	},
+	"dependencies": {
+		"selfmap": "^1.0.1"
+	}
 }
