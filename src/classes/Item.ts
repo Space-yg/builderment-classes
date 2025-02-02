@@ -41,6 +41,7 @@ export type ItemParams = BaseParams & {
 	outputAmount?: number
 }
 
+// TODO: Add alt recipes
 /**
  * Make a new item.
  * @extends {{@link Base `Base`}
