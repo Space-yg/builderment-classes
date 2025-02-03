@@ -1,6 +1,6 @@
 {
 	"name": "builderment-classes",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A library full of all Builderment classes and objects needed to make your own Builderment-related project!",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",

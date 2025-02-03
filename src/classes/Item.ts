@@ -141,7 +141,7 @@ export class Item extends Base {
 			this.factory = new Factory(paramsOrItem.factory, passByReference)
 
 			// resourcesNeeded
-			if (paramsOrItem instanceof Item) for (const [inputOption, inputPerMin] of paramsOrItem.resourcesNeeded.entries()) this.resourcesNeeded.set(new Item(inputOption, passByReference), { ...inputPerMin })
+			if (paramsOrItem instanceof Item) for (const [inputOption, inputPerMin] of paramsOrItem.resourcesNeeded) this.resourcesNeeded.set(new Item(inputOption, passByReference), { ...inputPerMin })
 			else for (const input of paramsOrItem.resourcesNeeded) this.resourcesNeeded.set(input.item, { amount: input.amount, inputPerMin: input.amount * this.outputPerMin })
 		}
 
@@ -170,10 +170,10 @@ export class Item extends Base {
 		scannedItems.push(this.name)
 
 		// if item is a raw item...
-		if (Object.values(this.resourcesNeeded).length === 0) return false
+		if (this.resourcesNeeded.size === 0) return false
 
 		// Find item recursively
-		return !Object.values(this.resourcesNeeded).every(resource => !resource.item.needsFunction(item, scannedItems))
+		return !this.resourcesNeeded.keys().every(item => !item.#needsFunction(item, scannedItems))
 	}
 
 	/**
@@ -211,14 +211,16 @@ export class Item extends Base {
 	 * @returns The amount of base resources needed to make the item.
 	 */
 	#getAmountOfBaseResourcesFunction(amount: number, resources: Partial<ResourcesParams> = {}): Partial<ResourcesParams> {
-		if (Object.keys(this.resourcesNeeded).length) {
-			for (const [item, inputPerMin] of this.resourcesNeeded.entries()) {
+		if (this.resourcesNeeded.size) {
+			for (const [item, inputPerMin] of this.resourcesNeeded) {
 				amount /= this.outputAmount
 				for (let i = 0; i < inputPerMin.amount; i++) {
 					resources = item.#getAmountOfBaseResourcesFunction(amount, resources)
 				}
 			}
-		} else {
+		}
+		// If there are no resources needed to make this item, then we reached the base
+		else {
 			if (typeof resources[this.name as keyof ResourcesParams] === "undefined" || isNaN(resources[this.name as keyof ResourcesParams]!)) resources[this.name as keyof ResourcesParams] = amount
 			else resources[this.name as keyof ResourcesParams]! += amount
 		}
@@ -243,7 +245,7 @@ export class Item extends Base {
 	#getAmountOfResourcesFunction(amount: number, resources: any = {}) {
 		if (isNaN(resources[this.name]!)) resources[this.name] = 0
 		resources[this.name] += amount
-		for (const [item, inputPerMin] of this.resourcesNeeded.entries()) {
+		for (const [item, inputPerMin] of this.resourcesNeeded) {
 			amount /= this.outputAmount
 			for (let i = 0; i < inputPerMin.amount; i++) {
 				resources = item.#getAmountOfResourcesFunction(amount, resources)
@@ -265,15 +267,23 @@ export class Item extends Base {
 	 * Get the output/min based on the tier of the factory.
 	 * @param tier The tier to get the output of. Default is 1.
 	 */
-	getOutputPerMin(tier: number = 1): number { return this.outputPerMin * this.factory.tiers[tier].output }
+	getOutputPerMin(tier: number = 1): number {
+		// Check if tier is valid
+		this.factory.hasN(tier, true)
+
+		return this.outputPerMin * this.factory.tiers[tier].output
+	}
 
 	/**
 	 * Get the resources needed to make the item at a tier
 	 * @param tier The tier to get the resources needed. Default is 1
 	 */
 	getResourcesNeeded(tier: number = 1): InputMap {
+		// Check if tier is valid
+		this.factory.hasN(tier, true)
+
 		const resources: InputMap = new Map()
-		for (const [item, inputPerMin] of this.resourcesNeeded.entries()) resources.set(item, {
+		for (const [item, inputPerMin] of this.resourcesNeeded) resources.set(item, {
 			amount: inputPerMin.amount,
 			inputPerMin: this.resourcesNeeded.get(item)!.inputPerMin * this.factory.tiers[tier].output,
 		})
@@ -465,7 +475,7 @@ export class Item extends Base {
 	 * @returns `true` if both items are the equal in the things that are similar between the equals and strictlyEquals methods, `false` otherwise.
 	 */
 	protected similarEquals(item: Item): boolean {
-		return Object.keys(this.resourcesNeeded).length === Object.keys(item.resourcesNeeded).length
+		return this.resourcesNeeded.size === item.resourcesNeeded.size
 			&& this.outputAmount === item.outputAmount
 			&& this.outputPerMin === item.outputPerMin
 	}
@@ -479,7 +489,7 @@ export class Item extends Base {
 		if (this === item) return true
 
 		// Compare resourcesNeeded
-		for (const [thisResourcesNeededItem, inputPerMin] of this.resourcesNeeded.entries()) if (
+		for (const [thisResourcesNeededItem, inputPerMin] of this.resourcesNeeded) if (
 			inputPerMin.amount !== item.resourcesNeeded.get(thisResourcesNeededItem)!.amount ||										// Check amount
 			inputPerMin.inputPerMin !== item.resourcesNeeded.get(thisResourcesNeededItem)!.inputPerMin ||							// Check inputPerMin
 			!item.resourcesNeeded.keys().some(itemResourceNeededItem => thisResourcesNeededItem.equals(itemResourceNeededItem))		// Check item
@@ -499,7 +509,7 @@ export class Item extends Base {
 		if (this === item) return true
 
 		// Compare resourcesNeeded
-		for (const [thisResourcesNeededItem, inputPerMin] of this.resourcesNeeded.entries()) if (
+		for (const [thisResourcesNeededItem, inputPerMin] of this.resourcesNeeded) if (
 			inputPerMin.amount !== item.resourcesNeeded.get(thisResourcesNeededItem)!.amount ||											// Check amount
 			inputPerMin.inputPerMin !== item.resourcesNeeded.get(thisResourcesNeededItem)!.inputPerMin ||								// Check inputPerMin
 			!item.resourcesNeeded.keys().some(itemResourceNeededItem => thisResourcesNeededItem.strictlyEquals(itemResourceNeededItem))	// Check item
