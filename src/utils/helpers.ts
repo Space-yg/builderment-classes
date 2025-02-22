@@ -2,6 +2,11 @@
  * @author Space.yg
  */
 
+import GLPKConstructor from "glpk.js"
+
+/** GNU Linear Programming Kit */
+export const glpk = GLPKConstructor()
+
 /**
  * Capitalize the first letters in a string and remove any unnecessary spacings.
  * @param string The string.

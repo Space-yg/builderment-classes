@@ -7,28 +7,50 @@ import { Item } from "./Item.js"
 import SelfMap from "selfmap"
 
 // Objects
-import { extractor, extractorOutputPerMin, uraniumExtractor, uraniumExtractorOutputPerMin } from "../objects/buildings/factories.js"
+import { extractor, extractorOutputPerMin, uraniumExtractor, uraniumExtractorOutputPerMin } from "@/objects/buildings/factories.js"
 
 // Other
-import { objToString } from "../utils/helpers.js"
+import { objToString, glpk } from "@/utils/helpers.js"
+import {
+	Constraints,
+	EX_RATE,
+	EX_RATE_UR,
+	NPP_RATE,
+	CPP_RATE,
+	NUC_BOOST,
+	COAL_BOOST,
+	EX_NPP,
+	EX_CPP,
+	EX_NPP_UR,
+	EX_CPP_UR,
+	InGameBaseResources,
+} from "@/utils/resources.js"
 
 // Types
 import type { InputOptions } from "./Input.d.ts"
+import type { LP, Options as GLPKOptions } from "glpk.js"
+import type {
+	InGameBaseResource,
+	InGameNonBaseResource,
+	InGameAltResource,
+	InGameResource,
+	MaxItem,
+} from "@/utils/resources.js"
 
 /** The resources type for all resources in a seed */
 export type ResourcesParams = {
 	/** The amount of Wood Log deposits in the seed */
 	"Wood Log": number
 	/** The amount of Stone deposits in the seed */
-	Stone: number
+	"Stone": number
 	/** The amount of Iron Ore deposits in the seed */
 	"Iron Ore": number
 	/** The amount of Copper Ore deposits in the seed */
 	"Copper Ore": number
 	/** The amount of Coal deposits in the seed */
-	Coal: number
+	"Coal": number
 	/** The amount of Wolframite deposits in the seed */
-	Wolframite: number
+	"Wolframite": number
 	/** The amount of Uranium Ore deposits in the seed */
 	"Uranium Ore": number
 }
@@ -70,6 +92,7 @@ function hexByteValue(array: number[]): number {
 	return parseInt(hex, 16)
 }
 
+// TODO: Add a CustomSeed<BaseResources extends string[]> class and make this Seed class extend it
 /** Make a new seed. */
 export class Seed {
 
@@ -138,6 +161,387 @@ export class Seed {
 	 * @returns The limited resource
 	 */
 	static getLimitedDeposit(item: Item, resources: ResourcesParams): InputOptions { return Seed.getLimitedDeposits(item, resources)[0] }
+
+	/**
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
+	 * 
+	 * Calculate the maximum amount of an item that can be made in a seed.
+	 * 
+	 * @param resources The resources of a seed
+	 * @param item The item to calculate the maximum for
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @template Boost Whether to calculate with power plant boosts taken in mind or not
+	 * @template Alts Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
+	 */
+	static getMaxInGameItem<Boost extends boolean = false, Alt extends boolean = false>(resources: ResourcesParams, item: InGameResource, boost?: Boost, alt?: Alt): MaxItem<Boost, Alt>
+	/**
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
+	 * 
+	 * Calculate the maximum amount of an item that can be made in a seed.
+	 * 
+	 * @param seed A seed
+	 * @param item The item to calculate the maximum for
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @template Boost Whether to calculate with power plant boosts taken in mind or not
+	 * @template Alts Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
+	 */
+	static getMaxInGameItem<Boost extends boolean = false, Alt extends boolean = false>(seed: Seed, item: InGameResource, boost?: Boost, alt?: Alt): MaxItem<Boost, Alt>
+	/**
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
+	 * 
+	 * Calculate the maximum amount of an item that can be made in a seed.
+	 * 
+	 * @param seed A seed or resources
+	 * @param item The item to calculate the maximum for
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @template Boost Whether to calculate with power plant boosts taken in mind or not
+	 * @template Alts Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
+	 */
+	static getMaxInGameItem<Boost extends boolean = false, Alt extends boolean = false>(seed: Seed | ResourcesParams, item: InGameResource, boost?: Boost, alt?: Alt): MaxItem<Boost, Alt>
+	/**
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
+	 * 
+	 * Calculate the maximum amount of an item that can be made in a seed.
+	 * 
+	 * @param resourcesOrSeed A seed or resources
+	 * @param item The item to calculate the maximum for
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @template Boost Whether to calculate with power plant boosts taken in mind or not
+	 * @template Alts Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
+	 */
+	static getMaxInGameItem<Boost extends boolean, Alt extends boolean>(resourcesOrSeed: Seed | ResourcesParams, item: InGameResource, boost: Boost = false as Boost, alt: Alt = false as Alt): MaxItem<Boost, Alt> {
+		const resources: ResourcesParams = resourcesOrSeed instanceof Seed ? resourcesOrSeed.resources : resourcesOrSeed
+
+		const boostCons = [
+			{
+				vars: [
+					{ name: "Wood Log Coal Ex", coef: 1.0 },
+					{ name: "Wood Log Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Wood Log"] * 0.95, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Stone Coal Ex", coef: 1.0 },
+					{ name: "Stone Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Stone * 0.95, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Iron Ore Coal Ex", coef: 1.0 },
+					{ name: "Iron Ore Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Iron Ore"] * 0.95, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Copper Ore Coal Ex", coef: 1.0 },
+					{ name: "Copper Ore Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Copper Ore"] * 0.95, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Coal Coal Ex", coef: 1.0 },
+					{ name: "Coal Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Coal * 0.95, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Wolframite Coal Ex", coef: 1.0 },
+					{ name: "Wolframite Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Wolframite * 0.95, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Uranium Ore Coal Ex", coef: 1.0 },
+					{ name: "Uranium Ore Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Uranium Ore"] * 0.95, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Wood Log Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Wood Log"] * 0.9, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Stone Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Stone * 0.9, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Iron Ore Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Iron Ore"] * 0.9, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Copper Ore Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Copper Ore"] * 0.9, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Coal Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Coal * 0.9, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Wolframite Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Wolframite * 0.9, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Uranium Ore Nuc Ex", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Uranium Ore"] * 0.2, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Coal Power Plant", coef: 1.0 },
+					{ name: "Wood Log Coal Ex", coef: -1.0 / EX_CPP },
+					{ name: "Stone Coal Ex", coef: -1.0 / EX_CPP },
+					{ name: "Iron Ore Coal Ex", coef: -1.0 / EX_CPP },
+					{ name: "Copper Ore Coal Ex", coef: -1.0 / EX_CPP },
+					{ name: "Coal Coal Ex", coef: -1.0 / EX_CPP },
+					{ name: "Wolframite Coal Ex", coef: -1.0 / EX_CPP },
+					{ name: "Uranium Ore Coal Ex", coef: -1.0 / EX_CPP_UR },
+				],
+				bnds: { type: glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Nuclear Fuel Cell", coef: 1.0 },
+					{ name: "Wood Log Nuc Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Stone Nuc Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Iron Ore Nuc Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Copper Ore Nuc Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Coal Nuc Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Wolframite Nuc Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Uranium Ore Nuc Ex", coef: -NPP_RATE / EX_NPP_UR },
+				],
+				bnds: { type: glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Wood Log", coef: 1.0 },
+					{ name: "Wood Log Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Wood Log Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Wood Log"] * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Stone", coef: 1.0 },
+					{ name: "Stone Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Stone Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Stone * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Iron Ore", coef: 1.0 },
+					{ name: "Iron Ore Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Iron Ore Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Iron Ore"] * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Copper Ore", coef: 1.0 },
+					{ name: "Copper Ore Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Copper Ore Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Copper Ore"] * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Coal", coef: 1.0 },
+					{ name: "Coal Power Plant", coef: CPP_RATE },
+					{ name: "Coal Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Coal Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Coal * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Wolframite", coef: 1.0 },
+					{ name: "Wolframite Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Wolframite Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Wolframite * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Uranium Ore", coef: 1.0 },
+					{ name: "Uranium Ore Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE_UR },
+					{ name: "Uranium Ore Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE_UR },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Uranium Ore"] * EX_RATE_UR, lb: 0.0 },
+			}
+		]
+		const nonBoostCons = [
+			{
+				vars: [
+					{ name: "Wood Log", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Wood Log"] * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Stone", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Stone * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Iron Ore", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Iron Ore"] * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Copper Ore", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Copper Ore"] * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Coal", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Coal * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Wolframite", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources.Wolframite * EX_RATE, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: "Uranium Ore", coef: 1.0 },
+				],
+				bnds: { type: glpk.GLP_UP, ub: resources["Uranium Ore"] * EX_RATE_UR, lb: 0.0 },
+			}
+		]
+
+		let allConstraints = boost ? boostCons : nonBoostCons
+		const constraints = Constraints.get(item, alt, boost)
+		for (const constraint of constraints) {
+			allConstraints.push(
+				{
+					vars: constraint,
+					bnds: { type: glpk.GLP_FX, ub: 0.0, lb: 0.0 }
+				}
+			)
+		}
+
+		const lp: LP = {
+			name: "LP",
+			// @ts-ignore
+			objective: {
+				direction: glpk.GLP_MAX,
+				vars: [
+					{ name: item, coef: 1.0 },
+				],
+			},
+			// @ts-ignore
+			subjectTo: allConstraints,
+		}
+		const opt: GLPKOptions = {
+			msglev: glpk.GLP_MSG_OFF,
+		}
+
+		const lpRes = glpk.solve(lp, opt)
+
+		const results: MaxItem<Boost, Alt> = {
+			maxAmount: lpRes.result.z,
+			resources: {},
+			baseResources: {
+				"Copper Ore": 0,
+				"Iron Ore": 0,
+				"Uranium Ore": 0,
+				"Wood Log": 0,
+				Coal: 0,
+				Stone: 0,
+				Wolframite: 0,
+			},
+			alts: {},
+			boosts: {
+				"Copper Ore": 0,
+				"Iron Ore": 0,
+				"Uranium Ore": 0,
+				"Wood Log": 0,
+				Coal: 0,
+				Stone: 0,
+				Wolframite: 0,
+			},
+		}
+
+		// @ts-ignore
+		if (!alt) delete results.alts
+		// @ts-ignore
+		if (!boost) delete results.boosts
+
+		for (const resource in lpRes.result.vars) {
+			// Round resource
+			lpRes.result.vars[resource] = Math.round(lpRes.result.vars[resource] * 1_000_000) / 1_000_000
+
+			// Boosts
+			if (boost && resource.endsWith(" Coal Ex") || resource.endsWith(" Nuc Ex")) {
+				const r = (resource.endsWith(" Coal Ex") ? resource.slice(0, resource.indexOf(" Coal Ex")) : resource.slice(0, resource.indexOf(" Nuc Ex"))) as InGameBaseResource
+				results.boosts![r] = lpRes.result.vars[resource]
+			}
+
+			// Base resources
+			else if (InGameBaseResources.includes(resource as InGameBaseResource)) results.baseResources[resource as InGameBaseResource] = lpRes.result.vars[resource]
+
+			// Remove any resources equal to 0
+			// This will remove it from alts and resources, so don't move this condition
+			else if (lpRes.result.vars[resource] === 0) continue
+
+			// Alts
+			else if (alt && resource.endsWith(" ALT")) {
+				const r = resource.slice(0, resource.indexOf(" ALT")) as InGameAltResource
+				results.alts![r] = lpRes.result.vars[resource]
+			}
+
+			// Standard resources
+			else if (resource.endsWith(" STD")) {
+				const r = resource.slice(0, resource.indexOf(" STD")) as InGameNonBaseResource
+				results.resources[r] = lpRes.result.vars[resource]
+			}
+
+			// Other resources
+			else results.resources[resource as InGameNonBaseResource] = lpRes.result.vars[resource]
+		}
+
+		return results
+	}
 
 	// TODO: Add support for constructing Seed object from .sav file
 	/**
@@ -258,12 +662,26 @@ export class Seed {
 	 * @returns The maximum amount to make the item in the seed
 	 */
 	getMax(item: Item): number {
-		let i = item.getAmountOfBaseResources()
 		const extractorMaxOutput = extractor.maxTier.output * extractorOutputPerMin
 		const uraniumExtractorMaxOutput = uraniumExtractor.maxTier.output * uraniumExtractorOutputPerMin
 		let maximum = Number.MAX_SAFE_INTEGER
-		for (const key in i) maximum = Math.min(maximum, this.resources[key as keyof ResourcesParams] * (key === "Uranium Ore" ? uraniumExtractorMaxOutput : extractorMaxOutput) / i[key as keyof ResourcesParams]!)
+		for (const key in item.baseResources) maximum = Math.min(maximum, this.resources[key as keyof ResourcesParams] * (key === "Uranium Ore" ? uraniumExtractorMaxOutput : extractorMaxOutput) / item.baseResources[key as keyof ResourcesParams]!)
 		return maximum
+	}
+
+	/**
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
+	 * 
+	 * Calculate the maximum amount of an item that can be made in a seed.
+	 * 
+	 * @param item The item to calculate the maximum for
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
+	 */
+	getMaxInGameItem<Boost extends boolean = false, Alt extends boolean = false>(item: InGameResource, boost: Boost = false as Boost, alt: Alt = false as Alt): MaxItem<Boost, Alt> {
+		return Seed.getMaxInGameItem(this, item, boost, alt)
 	}
 
 	/**

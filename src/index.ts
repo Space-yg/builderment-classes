@@ -77,6 +77,19 @@ export const Space: {
 // TODO: Add .delete method to all classes
 // TODO: Add Symbols to all classes
 
+//// Utils
+export {
+	type InGameBaseResource,
+	InGameBaseResources,
+	type InGameNonBaseResource,
+	InGameNonBaseResources,
+	type InGameResource,
+	InGameResources,
+	type InGameAltResource,
+	InGameAltResources,
+	type MaxItem,
+} from "@/utils/resources"
+
 //// Classes
 export {
 	Area,

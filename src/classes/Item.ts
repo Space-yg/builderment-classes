@@ -9,12 +9,12 @@ import { Factory } from "./buildings/tiers/output-tiers/Factory.js"
 
 // Objects
 import { extractor, extractorOutputPerMin, uraniumExtractor, uraniumExtractorOutputPerMin } from "@/objects/buildings/factories.js"
-import { coalPowerPlant, nuclearPowerPlant } from "@/objects/buildings/power-plants.js"
 
 // Types
 import type { BaseParams } from "./Base.js"
-import type { ResourcesParams, AdvancedWorldSetting } from "./Seed.js"
+import type { ResourcesParams } from "./Seed.js"
 import type { InputOptions, InputMap } from "./Input.d.ts"
+import type { InGameResource, MaxItem } from "@/utils/resources.js"
 
 /**
  * Parameters for {@link Item `Item`}.
@@ -87,7 +87,7 @@ export class Item extends Base {
 	outputAmount: NonNullable<ItemParams["outputAmount"]>
 	/** The resources needed to make the item. */
 	resourcesNeeded: InputMap
-	/** The base resources needed of 1 of the item. */
+	/** The base resources needed for 1 of the item. */
 	baseResources: Partial<ResourcesParams>
 
 	//* Getters
@@ -207,59 +207,71 @@ export class Item extends Base {
 	/**
 	 * Get the amount of base resources used to make the item.
 	 * @param amount The amount to be added to the total of the item.
-	 * @param resources The base resources needed to make the item.
 	 * @returns The amount of base resources needed to make the item.
 	 */
-	#getAmountOfBaseResourcesFunction(amount: number, resources: Partial<ResourcesParams> = {}): Partial<ResourcesParams> {
-		if (this.resourcesNeeded.size) {
-			for (const [item, inputPerMin] of this.resourcesNeeded) {
-				amount /= this.outputAmount
-				for (let i = 0; i < inputPerMin.amount; i++) {
-					resources = item.#getAmountOfBaseResourcesFunction(amount, resources)
-				}
-			}
+	#getAmountOfBaseResourcesFunction(amount: number): { [resource: string]: number } {
+		// Base resource
+		if (this.resourcesNeeded.size === 0) return {
+			[this.name]: amount
 		}
-		// If there are no resources needed to make this item, then we reached the base
-		else {
-			if (typeof resources[this.name as keyof ResourcesParams] === "undefined" || isNaN(resources[this.name as keyof ResourcesParams]!)) resources[this.name as keyof ResourcesParams] = amount
-			else resources[this.name as keyof ResourcesParams]! += amount
+
+		let resources: { [resource: string]: number } = {}
+
+		// For each resource needed
+		let r: { [resource: string]: number }
+		for (const [item, inputPerMin] of this.resourcesNeeded) {
+			amount /= this.outputAmount
+
+			r = item.#getAmountOfBaseResourcesFunction(amount)
+			for (const resource in r) resources[resource] = (resources[resource] ?? 0) + r[resource]! * inputPerMin.amount
 		}
+
 		return resources
 	}
 	/**
 	 * Get the amount of base resources used to make the item.
 	 * @param amount The amount of that resource. Default is 1.
 	 */
-	getAmountOfBaseResources(amount: number = 1): Partial<ResourcesParams> {
+	getAmountOfBaseResources(amount: number = 1): { [resource: string]: number } {
 		const resources = this.#getAmountOfBaseResourcesFunction(amount)
-		for (const resource in resources) resources[resource as keyof ResourcesParams] = Math.round(resources[resource as keyof ResourcesParams]! * 1000) / 1000
+
+		// Round results
+		for (const resource in resources) resources[resource] = Math.round(resources[resource]! * 1_000_000) / 1_000_000
+
 		return resources
 	}
 
 	/**
 	 * Get the amount of resources needed to make the item.
 	 * @param amount The amount to be added to the total of the item.
-	 * @param resources The amount of resources needed to make the item.
 	 * @returns The amount of resources needed to make the item.
 	 */
-	#getAmountOfResourcesFunction(amount: number, resources: any = {}) {
-		if (isNaN(resources[this.name]!)) resources[this.name] = 0
-		resources[this.name] += amount
+	#getAmountOfResourcesFunction(amount: number): { [resource: string]: number } {
+		let resources: { [resource: string]: number } = {
+			[this.name]: amount
+		}
+
+		// For each resource needed
+		let r: { [resource: string]: number }
 		for (const [item, inputPerMin] of this.resourcesNeeded) {
 			amount /= this.outputAmount
-			for (let i = 0; i < inputPerMin.amount; i++) {
-				resources = item.#getAmountOfResourcesFunction(amount, resources)
-			}
+
+			r = item.#getAmountOfResourcesFunction(amount)
+			for (const resource in r) resources[resource] = (resources[resource] ?? 0) + r[resource]! * inputPerMin.amount
 		}
+
 		return resources
 	}
 	/**
 	 * Get the amount of resources used to make the item.
 	 * @param amount The amount of that resource. Default is 1.
 	 */
-	getAmountOfResources(amount: number = 1) {
+	getAmountOfResources(amount: number = 1): { [resource: string]: number } {
 		const resources = this.#getAmountOfResourcesFunction(amount)
-		for (const resource in resources) resources[resource] = Math.round(resources[resource] * 1000) / 1000
+
+		// Round results
+		for (const resource in resources) resources[resource] = Math.round(resources[resource] * 1_000_000) / 1_000_000
+
 		return resources
 	}
 
@@ -291,29 +303,29 @@ export class Item extends Base {
 	}
 
 	/**
-	 * Get the maximum amount you can get of this item in a seed.
+	 * **Note: This method only works with the normal in-game _base_ items. It does not work with any custom _base_ items.**
 	 * 
-	 * **Note:** This method only works with the normal in-game items.
+	 * Get the maximum amount you can get of this item in a seed.
 	 * @param seed A {@link Seed `Seed`} object.
 	 * @returns the maximum amount you can get of this item.
 	 */
-	getMaxResourceAmountInSeed(seed: Seed): number
+	getMaxAmount(seed: Seed): number
 	/**
-	 * Get the maximum amount you can get of this item in a seed.
+	 * **Note: This method only works with the normal in-game _base_ items. It does not work with any custom _base_ items.**
 	 * 
-	 * **Note:** This method only works with the normal in-game items.
+	 * Get the maximum amount you can get of this item in a seed.
 	 * @param resources The resources in the world.
 	 * @returns the maximum amount you can get of this item.
 	 */
-	getMaxResourceAmountInSeed(resources: ResourcesParams): number
+	getMaxAmount(resources: ResourcesParams): number
 	/**
-	 * Get the maximum amount you can get of this item in a seed.
+	 * **Note: This method only works with the normal in-game _base_ items. It does not work with any custom _base_ items.**
 	 * 
-	 * **Note:** This method only works with the normal in-game items.
+	 * Get the maximum amount you can get of this item in a seed.
 	 * @param resourcesOrSeed The resources in the world or a {@link Seed `Seed`} object.
 	 * @returns the maximum amount you can get of this item.
 	 */
-	getMaxResourceAmountInSeed(resourcesOrSeed: Seed | ResourcesParams): number {
+	getMaxAmount(resourcesOrSeed: Seed | ResourcesParams): number {
 		const resources: ResourcesParams = resourcesOrSeed instanceof Seed ? resourcesOrSeed.resources : resourcesOrSeed
 
 		// Get Extractor speeds
@@ -326,147 +338,66 @@ export class Item extends Base {
 	}
 
 	/**
-	 * Get an approximate of the maximum amount of this item that can be produced using Power Plants.
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
 	 * 
-	 * Steps of how the process works:
-	 * 1. Coal Power Plants boost Uranium Extractors.
-	 * 2. Coal Power Plants boost Coal Extractors.
-	 * 3. Nuclear Power Plants power the rest of the deposits' Extractors.
-	 * 4. If Coal is not the limited resource, use it to boost the other resources.
-	 * 5. Calculate the maximum resource amount.
+	 * Calculate the maximum amount of this item that can be made in a seed.
 	 * 
-	 * **Note:** This method only works with the normal in-game items.
-	 * @param seed A {@link Seed `Seed`} object.
-	 * @returns The maximum amount of this item that can be produced using Power Plants.
+	 * @param resources The resources of a seed
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @template Boost Whether to calculate with power plant boosts taken in mind or not
+	 * @template Alts Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
 	 */
-	getMaxResourceAmountInSeedWithPowerPlants(seed: Seed): number
+	getMaxInGameItemAmount<Boost extends boolean = false, Alt extends boolean = false>(resources: ResourcesParams, boost?: Boost, alt?: Alt): MaxItem<Boost, Alt>
 	/**
-	 * Get an approximate of the maximum amount of this item that can be produced using Power Plants.
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
 	 * 
-	 * Steps of how the process works:
-	 * 1. Coal Power Plants boost Uranium Extractors.
-	 * 2. Coal Power Plants boost Coal Extractors.
-	 * 3. Nuclear Power Plants power the rest of the deposits' Extractors.
-	 * 4. If Coal is not the limited resource, use it to boost the other resources.
-	 * 5. Calculate the maximum resource amount.
+	 * Calculate the maximum amount of this item that can be made in a seed.
 	 * 
-	 * **Note:** This method only works with the normal in-game items.
-	 * @param resources The resources in the world.
-	 * @param resourceAmount The resource amount of the world.
-	 * @returns The maximum amount of this item that can be produced using Power Plants.
+	 * @param seed A seed
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @template Boost Whether to calculate with power plant boosts taken in mind or not
+	 * @template Alts Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
 	 */
-	getMaxResourceAmountInSeedWithPowerPlants(resources: ResourcesParams, resourceAmount?: AdvancedWorldSetting): number
+	getMaxInGameItemAmount<Boost extends boolean = false, Alt extends boolean = false>(seed: Seed, boost?: Boost, alt?: Alt): MaxItem<Boost, Alt>
 	/**
-	 * Get an approximate of the maximum amount of this item that can be produced using Power Plants.
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
 	 * 
-	 * Steps of how the process works:
-	 * 1. Coal Power Plants boost Uranium Extractors.
-	 * 2. Coal Power Plants boost Coal Extractors.
-	 * 3. Nuclear Power Plants power the rest of the deposits' Extractors.
-	 * 4. If Coal is not the limited resource, use it to boost the other resources.
-	 * 5. Calculate the maximum resource amount.
+	 * Calculate the maximum amount of this item that can be made in a seed.
 	 * 
-	 * **Note:** This method only works with the normal in-game items.
-	 * @param resourcesOrSeed A {@link Seed `Seed`} object or resources in the world.
-	 * @param resourceAmount The resource amount of the world. If a {@link Seed `Seed`} object is supplied to {@link resourcesOrSeed `resourcesOrSeed`}, then this parameter is ignored.
-	 * @returns The maximum amount of this item that can be produced using Power Plants.
+	 * @param seed A seed or resources
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @template Boost Whether to calculate with power plant boosts taken in mind or not
+	 * @template Alts Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
 	 */
-	getMaxResourceAmountInSeedWithPowerPlants(resourcesOrSeed: ResourcesParams | Seed, resourceAmount?: AdvancedWorldSetting): number
-	getMaxResourceAmountInSeedWithPowerPlants(resourcesOrSeed: Seed | ResourcesParams, resourceAmount: AdvancedWorldSetting = 100): number {
-
-		// Steps of how the process works
-		// 1. Coal Power Plants boost Uranium Extractors
-		// 2. Coal Power Plants boost Coal Extractors
-		// 3. Nuclear Power Plants power the rest of the deposits' Extractors
-		// 4. If Coal is not the limited resource, use it to boost the other resources
-		// 5. Calculate the maximum resource amount
-
-		/** The amount of Extractors a Coal Power Plant can reach */
-		let coalPowerPlantExtractorReach: number
-		/** The amount of Extractors a Nuclear Power Plant can reach */
-		let nuclearPowerPlantExtractorReach: number
-		/** The average amount of deposits of Uranium Ore in a patch */
-		let uraniumOreDepositsInPatch: number
-
-		// Change the above variables based on Resource Amount
-		// TODO: Change these values
-		switch (resourcesOrSeed instanceof Seed ? resourcesOrSeed.resourceAmount : resourceAmount) {
-			case 50:
-				coalPowerPlantExtractorReach = NaN // TODO: Change this
-				nuclearPowerPlantExtractorReach = NaN // TODO: Change this
-				uraniumOreDepositsInPatch = NaN // TODO: Change this
-				break
-			case 75:
-				coalPowerPlantExtractorReach = NaN // TODO: Change this
-				nuclearPowerPlantExtractorReach = NaN // TODO: Change this
-				uraniumOreDepositsInPatch = NaN // TODO: Change this
-				break
-			case 100:
-				coalPowerPlantExtractorReach = 22
-				nuclearPowerPlantExtractorReach = 36
-				uraniumOreDepositsInPatch = 6.9
-				break
-			case 150:
-				coalPowerPlantExtractorReach = NaN // TODO: Change this
-				nuclearPowerPlantExtractorReach = NaN // TODO: Change this
-				uraniumOreDepositsInPatch = 6.9
-				break
-			case 200:
-				coalPowerPlantExtractorReach = 22
-				nuclearPowerPlantExtractorReach = 55
-				uraniumOreDepositsInPatch = 6.9
-				break
-		}
-
-		/** The resources of the world before the calculation */
-		const resources: ResourcesParams = resourcesOrSeed instanceof Seed ? resourcesOrSeed.resources : resourcesOrSeed
-		/** The resources of the world after the calculation */
-		const r: ResourcesParams = { ...resources }
-
-		// Get Extractor speeds
-		const extractorMaxOutput = extractor.maxTier.output * extractorOutputPerMin
-		const uraniumExtractorMaxOutput = uraniumExtractor.maxTier.output * uraniumExtractorOutputPerMin
-
-		/** The base resources to make a Nuclear Fuel Cell */
-		const nuclearFuelCellBaseResources: Partial<ResourcesParams> = nuclearPowerPlant.input!.item.baseResources
-
-		//// 1. Coal Power Plants boost Uranium Extractors
-		r.Coal -= r["Uranium Ore"] / uraniumOreDepositsInPatch
-		r["Uranium Ore"] *= coalPowerPlant.speed
-
-		//// 2. Coal Power Plants boost Coal Extractors
-		r.Coal = (r.Coal * coalPowerPlant.speed) - (r.Coal / coalPowerPlantExtractorReach * (coalPowerPlant.input!.inputPerMin / extractorMaxOutput))
-
-		//// 3. Nuclear Power Plants power the limited the deposits' Extractors
-		// While Uranium Ore has enough to make a Nuclear Fuel Cell...
-		while (r["Uranium Ore"] - nuclearFuelCellBaseResources["Uranium Ore"]! / uraniumExtractorMaxOutput > 0) {
-			// Minus the amount needed to make a Nuclear Fuel Cell
-			for (const resource in nuclearFuelCellBaseResources) r[resource as keyof ResourcesParams] -= nuclearFuelCellBaseResources[resource as keyof ResourcesParams]! / (resource === "Uranium Ore" ? uraniumExtractorMaxOutput : extractorMaxOutput)
-
-			// Get limited resource
-			const limited = Seed.getLimitedDeposit(this, r)
-			if (limited.item.name === "Coal" || limited.item.name === "Uranium Ore") break
-
-			// Add boost to limited resource
-			r[limited.item.name as keyof ResourcesParams] += nuclearPowerPlantExtractorReach * nuclearPowerPlant.speed - nuclearPowerPlantExtractorReach
-		}
-
-		//// 4. If Coal is not the limited resource, use it to boost the other resources
-		// While Coal is not the limited...
-		while (true) {
-			// Get limited resource
-			const limited = Seed.getLimitedDeposit(this, { ...r, Coal: r.Coal - coalPowerPlant.input!.inputPerMin / extractorMaxOutput })
-			if (limited.item.name === "Coal" || limited.item.name === "Uranium Ore") break
-
-			// Minus the amount needed to make a Nuclear Fuel Cell
-			r.Coal -= coalPowerPlant.input!.inputPerMin / extractorMaxOutput
-
-			// Add boost to limited resource
-			r[limited.item.name as keyof ResourcesParams] += coalPowerPlantExtractorReach * coalPowerPlant.speed - coalPowerPlantExtractorReach
-		}
-
-		//// 5. Calculate the maximum resource amount
-		return this.getMaxResourceAmountInSeed(r)
+	getMaxInGameItemAmount<Boost extends boolean = false, Alt extends boolean = false>(seed: Seed | ResourcesParams, boost?: Boost, alt?: Alt): MaxItem<Boost, Alt>
+	/**
+	 * **Note: This method only works with the normal in-game items. It does not work with custom items.**
+	 * 
+	 * Calculate the maximum amount of this item that can be made in a seed.
+	 * 
+	 * @param resourcesOrSeed A seed or resources
+	 * @param boost Whether to calculate with power plant boosts taken in mind or not
+	 * @param alt Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @template Boost Whether to calculate with power plant boosts taken in mind or not
+	 * @template Alts Whether to calculate with alt resources taken in mind or not
+	 * 
+	 * @author Human-Crow
+	 */
+	getMaxInGameItemAmount<Boost extends boolean, Alt extends boolean>(resourcesOrSeed: Seed | ResourcesParams, boost: Boost = false as Boost, alt: Alt = false as Alt): MaxItem<Boost, Alt> {
+		return Seed.getMaxInGameItem(resourcesOrSeed, this.name as InGameResource, boost, alt)
 	}
 
 	/**
