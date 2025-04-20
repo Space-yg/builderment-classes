@@ -1,0 +1,17 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"module": "NodeNext",                                
+		"moduleResolution": "nodenext",
+		"baseUrl": "./",
+		"paths": {
+			"@/utils/*": ["./utils/*"],
+			"@/classes/*": ["./classes/*"],
+			"@/objects/*": ["./objects/*"],
+			"@/types": ["./types.d.ts"],
+		},
+	},
+	"files": [],
+	"include": ["**/*"],
+	"exclude": []
+}

@@ -1,0 +1,20 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"module": "ESNext",                                
+		"moduleResolution": "classic",
+		"baseUrl": "../../", // To resolve tsup requiring for the non-@ paths to have ./ and VS Code requiring ../../
+		"paths": {
+			"@/utils/*": ["src/browser/utils/*"],
+			"@/classes/*": ["src/browser/classes/*"],
+			"@/objects/*": ["src/browser/objects/*"],
+			"@/types": ["src/browser/types.d.ts"],
+			
+			"glpk.js": ["node_modules/glpk.js/dist/glpk.d.ts", "node_modules/glpk.js/dist/index.js"],
+			"selfmap": ["node_modules/selfmap/dist/index.d.ts", "node_modules/selfmap/dist/index.mjs"]
+		}
+	},
+	"files": [],
+	"include": ["**/*"],
+	"exclude": []
+}
