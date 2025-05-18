@@ -236,233 +236,845 @@ export class Seed {
 		const boostCons = [
 			{
 				vars: [
-					{ name: "Wood Log Coal Ex", coef: 1.0 },
-					{ name: "Wood Log Nuc Ex", coef: 1.0 },
+					{ name: "Wood_Coal_Ex", coef: 1 },
+					{ name: "Wood_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wood Log"] * 0.95, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wood Log"] * 0.95, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Stone Coal Ex", coef: 1.0 },
-					{ name: "Stone Nuc Ex", coef: 1.0 },
+					{ name: "Stone_Coal_Ex", coef: 1 },
+					{ name: "Stone_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Stone * 0.95, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Stone"] * 0.95, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Iron Ore Coal Ex", coef: 1.0 },
-					{ name: "Iron Ore Nuc Ex", coef: 1.0 },
+					{ name: "Iron_Coal_Ex", coef: 1 },
+					{ name: "Iron_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Iron Ore"] * 0.95, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Iron Ore"] * 0.95, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Copper Ore Coal Ex", coef: 1.0 },
-					{ name: "Copper Ore Nuc Ex", coef: 1.0 },
+					{ name: "Copper_Coal_Ex", coef: 1 },
+					{ name: "Copper_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Copper Ore"] * 0.95, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Copper Ore"] * 0.95, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Coal Coal Ex", coef: 1.0 },
-					{ name: "Coal Nuc Ex", coef: 1.0 },
+					{ name: "Coal_Coal_Ex", coef: 1 },
+					{ name: "Coal_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Coal * 0.95, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Coal"] * 0.95, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Wolframite Coal Ex", coef: 1.0 },
-					{ name: "Wolframite Nuc Ex", coef: 1.0 },
+					{ name: "Wolframite_Coal_Ex", coef: 1 },
+					{ name: "Wolframite_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Wolframite * 0.95, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wolframite"] * 0.95, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Uranium Ore Coal Ex", coef: 1.0 },
-					{ name: "Uranium Ore Nuc Ex", coef: 1.0 },
+					{ name: "Uranium_Coal_Ex", coef: 1 },
+					{ name: "Uranium_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Uranium Ore"] * 0.95, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Uranium Ore"] * 0.95, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Wood Log Nuc Ex", coef: 1.0 },
+					{ name: "Wood_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wood Log"] * 0.9, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wood Log"] * 0.9, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Stone Nuc Ex", coef: 1.0 },
+					{ name: "Stone_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Stone * 0.9, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Stone"] * 0.9, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Iron Ore Nuc Ex", coef: 1.0 },
+					{ name: "Iron_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Iron Ore"] * 0.9, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Iron Ore"] * 0.9, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Copper Ore Nuc Ex", coef: 1.0 },
+					{ name: "Copper_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Copper Ore"] * 0.9, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Copper Ore"] * 0.9, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Coal Nuc Ex", coef: 1.0 },
+					{ name: "Coal_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Coal * 0.9, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Coal"] * 0.9, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Wolframite Nuc Ex", coef: 1.0 },
+					{ name: "Wolframite_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Wolframite * 0.9, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wolframite"] * 0.9, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Uranium Ore Nuc Ex", coef: 1.0 },
+					{ name: "Uranium_Nuc_Ex", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Uranium Ore"] * 0.2, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Uranium Ore"] * 0.2, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Coal Power Plant", coef: 1.0 },
-					{ name: "Wood Log Coal Ex", coef: -1.0 / EX_CPP },
-					{ name: "Stone Coal Ex", coef: -1.0 / EX_CPP },
-					{ name: "Iron Ore Coal Ex", coef: -1.0 / EX_CPP },
-					{ name: "Copper Ore Coal Ex", coef: -1.0 / EX_CPP },
-					{ name: "Coal Coal Ex", coef: -1.0 / EX_CPP },
-					{ name: "Wolframite Coal Ex", coef: -1.0 / EX_CPP },
-					{ name: "Uranium Ore Coal Ex", coef: -1.0 / EX_CPP_UR },
+					{ name: "Coal_Power_Plant", coef: 1 },
+					{ name: "Wood_Coal_Ex", coef: -1 / EX_CPP },
+					{ name: "Stone_Coal_Ex", coef: -1 / EX_CPP },
+					{ name: "Iron_Coal_Ex", coef: -1 / EX_CPP },
+					{ name: "Copper_Coal_Ex", coef: -1 / EX_CPP },
+					{ name: "Coal_Coal_Ex", coef: -1 / EX_CPP },
+					{ name: "Wolframite_Coal_Ex", coef: -1 / EX_CPP },
+					{ name: "Uranium_Coal_Ex", coef: -1 / EX_CPP_UR }
 				],
-				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_FX, ub: 0, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Nuclear Fuel Cell", coef: 1.0 },
-					{ name: "Wood Log Nuc Ex", coef: -NPP_RATE / EX_NPP },
-					{ name: "Stone Nuc Ex", coef: -NPP_RATE / EX_NPP },
-					{ name: "Iron Ore Nuc Ex", coef: -NPP_RATE / EX_NPP },
-					{ name: "Copper Ore Nuc Ex", coef: -NPP_RATE / EX_NPP },
-					{ name: "Coal Nuc Ex", coef: -NPP_RATE / EX_NPP },
-					{ name: "Wolframite Nuc Ex", coef: -NPP_RATE / EX_NPP },
-					{ name: "Uranium Ore Nuc Ex", coef: -NPP_RATE / EX_NPP_UR },
+					{ name: "Nuclear_Fuel_Cell", coef: 1 },
+					{ name: "Wood_Nuc_Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Stone_Nuc_Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Iron_Nuc_Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Copper_Nuc_Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Coal_Nuc_Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Wolframite_Nuc_Ex", coef: -NPP_RATE / EX_NPP },
+					{ name: "Uranium_Nuc_Ex", coef: -NPP_RATE / EX_NPP_UR }
 				],
-				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_FX, ub: 0, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Wood Log", coef: 1.0 },
-					{ name: "Wood Log Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
-					{ name: "Wood Log Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+					{ name: "Wood_Log", coef: 1 },
+					{ name: "Wood_Coal_Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Wood_Nuc_Ex", coef: (1 - NUC_BOOST) * EX_RATE }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wood Log"] * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wood Log"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Stone", coef: 1.0 },
-					{ name: "Stone Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
-					{ name: "Stone Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+					{ name: "Stone", coef: 1 },
+					{ name: "Stone_Coal_Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Stone_Nuc_Ex", coef: (1 - NUC_BOOST) * EX_RATE }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Stone * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Stone"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Iron Ore", coef: 1.0 },
-					{ name: "Iron Ore Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
-					{ name: "Iron Ore Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+					{ name: "Iron_Ore", coef: 1 },
+					{ name: "Iron_Coal_Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Iron_Nuc_Ex", coef: (1 - NUC_BOOST) * EX_RATE }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Iron Ore"] * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Iron Ore"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Copper Ore", coef: 1.0 },
-					{ name: "Copper Ore Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
-					{ name: "Copper Ore Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+					{ name: "Copper_Ore", coef: 1 },
+					{ name: "Copper_Coal_Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Copper_Nuc_Ex", coef: (1 - NUC_BOOST) * EX_RATE }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Copper Ore"] * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Copper Ore"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Coal", coef: 1.0 },
-					{ name: "Coal Power Plant", coef: CPP_RATE },
-					{ name: "Coal Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
-					{ name: "Coal Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+					{ name: "Coal", coef: 1 },
+					{ name: "Coal_Power_Plant", coef: CPP_RATE },
+					{ name: "Coal_Coal_Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Coal_Nuc_Ex", coef: (1 - NUC_BOOST) * EX_RATE }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Coal * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Coal"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Wolframite", coef: 1.0 },
-					{ name: "Wolframite Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE },
-					{ name: "Wolframite Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE },
+					{ name: "Wolframite", coef: 1 },
+					{ name: "Wolframite_Coal_Ex", coef: (1 - COAL_BOOST) * EX_RATE },
+					{ name: "Wolframite_Nuc_Ex", coef: (1 - NUC_BOOST) * EX_RATE }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Wolframite * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wolframite"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Uranium Ore", coef: 1.0 },
-					{ name: "Uranium Ore Coal Ex", coef: (1 - COAL_BOOST) * EX_RATE_UR },
-					{ name: "Uranium Ore Nuc Ex", coef: (1 - NUC_BOOST) * EX_RATE_UR },
+					{ name: "Uranium_Ore", coef: 1 },
+					{ name: "Uranium_Coal_Ex", coef: (1 - COAL_BOOST) * EX_RATE_UR },
+					{ name: "Uranium_Nuc_Ex", coef: (1 - NUC_BOOST) * EX_RATE_UR }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Uranium Ore"] * EX_RATE_UR, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Uranium Ore"] * EX_RATE_UR, lb: 0 }
 			}
 		]
 		const nonBoostCons = [
 			{
 				vars: [
-					{ name: "Wood Log", coef: 1.0 },
+					{ name: "Wood_Log", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wood Log"] * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wood Log"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Stone", coef: 1.0 },
+					{ name: "Stone", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Stone * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Stone"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Iron Ore", coef: 1.0 },
+					{ name: "Iron_Ore", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Iron Ore"] * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Iron Ore"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Copper Ore", coef: 1.0 },
+					{ name: "Copper_Ore", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Copper Ore"] * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Copper Ore"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Coal", coef: 1.0 },
+					{ name: "Coal", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Coal * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Coal"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Wolframite", coef: 1.0 },
+					{ name: "Wolframite", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources.Wolframite * EX_RATE, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Wolframite"] * EX_RATE, lb: 0 }
 			},
 			{
 				vars: [
-					{ name: "Uranium Ore", coef: 1.0 },
+					{ name: "Uranium_Ore", coef: 1 }
 				],
-				bnds: { type: this.#glpk.GLP_UP, ub: resources["Uranium Ore"] * EX_RATE_UR, lb: 0.0 },
+				bnds: { type: this.#glpk.GLP_UP, ub: resources["Uranium Ore"] * EX_RATE_UR, lb: 0 }
 			}
 		]
+		const nonAltCons = [
+			{
+				vars: [
+					{ name: 'Copper_Wire_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Super_Computer_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Turbocharger_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Logic_Circuit_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Iron_Gear_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Steel_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Industrial_Frame_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Concrete_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Electromagnet_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Electric_Motor_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Rotor_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Tungsten_Carbide_ALT', coef: 1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			}
+		]
+		const generalCons = [
+			{
+				vars: [
+					{ name: 'Resource_Sum', coef: 1.0 },
+					{ name: 'Wood_Log', coef: -1.0 },
+					{ name: 'Stone', coef: -1.0 },
+					{ name: 'Iron_Ore', coef: -1.0 },
+					{ name: 'Copper_Ore', coef: -1.0 },
+					{ name: 'Coal', coef: -1.0 },
+					{ name: 'Wolframite', coef: -1.0 },
+					{ name: 'Uranium_Ore', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Wood_Log', coef: 1.0 },
+					{ name: 'Wood_Plank', coef: -1.0 },
+					{ name: 'Graphite', coef: -3.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Stone', coef: 1.0 },
+					{ name: 'Sand', coef: -1.0 },
+					{ name: 'Concrete_ALT', coef: -20.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Iron_Ore', coef: 1.0 },
+					{ name: 'Iron_Ingot', coef: -1.0 },
+					{ name: 'Steel_STD', coef: -6.0 },
+					{ name: 'Steel_ALT', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Copper_Ore', coef: 1.0 },
+					{ name: 'Copper_Ingot', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Coal', coef: 1.0 },
+					{ name: 'Graphite', coef: -3.0 },
+					{ name: 'Steel_ALT', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Wolframite', coef: 1.0 },
+					{ name: 'Tungsten_Ore', coef: -5.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Uranium_Ore', coef: 1.0 },
+					{ name: 'Enriched_Uranium', coef: -30.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Atomic_Locator', coef: 1.0 },
+					{ name: 'Matter_Duplicator', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Battery', coef: 1.0 },
+					{ name: 'Energy_Cube', coef: -2.0 },
+					{ name: 'Electric_Motor_STD', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Carbon_Fiber', coef: 1.0 },
+					{ name: 'Nano_Wire', coef: -2.0 },
+					{ name: 'Copper_Wire_ALT', coef: -0.125 },
+					{ name: 'Industrial_Frame_ALT', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Computer', coef: 1.0 },
+					{ name: 'Stabilizer', coef: -1.0 },
+					{ name: 'Super_Computer_STD', coef: -2.0 },
+					{ name: 'Super_Computer_ALT', coef: -1.0 },
+					{ name: 'Turbocharger_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Concrete', coef: 1.0 },
+					{ name: 'Concrete_STD', coef: -1.0 },
+					{ name: 'Concrete_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Concrete', coef: 1.0 },
+					{ name: 'Industrial_Frame_STD', coef: -6.0 },
+					{ name: 'Tank', coef: -4.0 },
+					{ name: 'Atomic_Locator', coef: -24.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Condenser_Lens', coef: 1.0 },
+					{ name: 'Electron_Microscope', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Copper_Ingot', coef: 1.0 },
+					{ name: 'Copper_Wire_STD', coef: -1.5 },
+					{ name: 'Heat_Sink', coef: -5.0 },
+					{ name: 'Rotor_ALT', coef: -18.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Copper_Wire', coef: 1.0 },
+					{ name: 'Copper_Wire_STD', coef: -1.0 },
+					{ name: 'Copper_Wire_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Copper_Wire', coef: 1.0 },
+					{ name: 'Electromagnet_STD', coef: -6.0 },
+					{ name: 'Logic_Circuit_STD', coef: -3.0 },
+					{ name: 'Gyroscope', coef: -12.0 },
+					{ name: 'Atomic_Locator', coef: -50.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Coupler', coef: 1.0 },
+					{ name: 'Turbocharger_STD', coef: -4.0 },
+					{ name: 'Super_Computer_STD', coef: -8.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Electric_Motor', coef: 1.0 },
+					{ name: 'Electric_Motor_STD', coef: -1.0 },
+					{ name: 'Electric_Motor_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Electric_Motor', coef: 1.0 },
+					{ name: 'Stabilizer', coef: -1.0 },
+					{ name: 'Matter_Compressor', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Electromagnet', coef: 1.0 },
+					{ name: 'Electromagnet_STD', coef: -1.0 },
+					{ name: 'Electromagnet_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Electromagnet', coef: 1.0 },
+					{ name: 'Battery', coef: -8.0 },
+					{ name: 'Electron_Microscope', coef: -8.0 },
+					{ name: 'Magnetic_Field_Generator', coef: -10.0 },
+					{ name: 'Electric_Motor_ALT', coef: -6.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Electron_Microscope', coef: 1.0 },
+					{ name: 'Atomic_Locator', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Empty_Fuel_Cell', coef: 1.0 },
+					{ name: 'Nuclear_Fuel_Cell', coef: -1.0 },
+					{ name: 'Electric_Motor_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Energy_Cube', coef: 1.0 },
+					{ name: 'Matter_Duplicator', coef: -5.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Enriched_Uranium', coef: 1.0 },
+					{ name: 'Nuclear_Fuel_Cell', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Glass', coef: 1.0 },
+					{ name: 'Condenser_Lens', coef: -3.0 },
+					{ name: 'Nano_Wire', coef: -4.0 },
+					{ name: 'Empty_Fuel_Cell', coef: -5.0 },
+					{ name: 'Tank', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Graphite', coef: 1.0 },
+					{ name: 'Carbon_Fiber', coef: -4.0 },
+					{ name: 'Battery', coef: -8.0 },
+					{ name: 'Steel_STD', coef: -1.0 },
+					{ name: 'Tungsten_Carbide_STD', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Gyroscope', coef: 1.0 },
+					{ name: 'Stabilizer', coef: -2.0 },
+					{ name: 'Super_Computer_ALT', coef: -1.0 },
+					{ name: 'Turbocharger_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Heat_Sink', coef: 1.0 },
+					{ name: 'Computer', coef: -3.0 },
+					{ name: 'Super_Computer_STD', coef: -8.0 },
+					{ name: 'Logic_Circuit_ALT', coef: -1.0 },
+					{ name: 'Turbocharger_ALT', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Industrial_Frame', coef: 1.0 },
+					{ name: 'Industrial_Frame_STD', coef: -1.0 },
+					{ name: 'Industrial_Frame_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Industrial_Frame', coef: 1.0 },
+					{ name: 'Energy_Cube', coef: -1.0 },
+					{ name: 'Matter_Compressor', coef: -1.0 },
+					{ name: 'Magnetic_Field_Generator', coef: -1.0 },
+					{ name: 'Super_Computer_ALT', coef: -0.5 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Iron_Gear', coef: 1.0 },
+					{ name: 'Iron_Gear_STD', coef: -1.0 },
+					{ name: 'Iron_Gear_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Iron_Gear', coef: 1.0 },
+					{ name: 'Electric_Motor_STD', coef: -4.0 },
+					{ name: 'Turbocharger_STD', coef: -8.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Iron_Ingot', coef: 1.0 },
+					{ name: 'Iron_Gear_STD', coef: -2.0 },
+					{ name: 'Iron_Plating', coef: -2.0 },
+					{ name: 'Electromagnet_STD', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Iron_Plating', coef: 1.0 },
+					{ name: 'Metal_Frame', coef: -4.0 },
+					{ name: 'Rotor_STD', coef: -2.0 },
+					{ name: 'Rotor_ALT', coef: -18.0 },
+					{ name: 'Industrial_Frame_ALT', coef: -10.0 },
+					{ name: 'Logic_Circuit_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Logic_Circuit', coef: 1.0 },
+					{ name: 'Logic_Circuit_STD', coef: -1.0 },
+					{ name: 'Logic_Circuit_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Logic_Circuit', coef: 1.0 },
+					{ name: 'Computer', coef: -3.0 },
+					{ name: 'Turbocharger_STD', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Magnetic_Field_Generator', coef: 1.0 },
+					{ name: 'Quantum_Entangler', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Matter_Compressor', coef: 1.0 },
+					{ name: 'Particle_Glue', coef: -0.1 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Matter_Duplicator', coef: 1.0 },
+					{ name: 'Earth_Token', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Metal_Frame', coef: 1.0 },
+					{ name: 'Computer', coef: -1.0 },
+					{ name: 'Industrial_Frame_STD', coef: -2.0 },
+					{ name: 'Electron_Microscope', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Nano_Wire', coef: 1.0 },
+					{ name: 'Electron_Microscope', coef: -2.0 },
+					{ name: 'Turbocharger_STD', coef: -2.0 },
+					{ name: 'Magnetic_Field_Generator', coef: -10.0 },
+					{ name: 'Electromagnet_ALT', coef: -1.0 / 12.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Particle_Glue', coef: 1.0 },
+					{ name: 'Matter_Duplicator', coef: -100.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Quantum_Entangler', coef: 1.0 },
+					{ name: 'Matter_Duplicator', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Rotor', coef: 1.0 },
+					{ name: 'Rotor_STD', coef: -1.0 },
+					{ name: 'Rotor_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Rotor', coef: 1.0 },
+					{ name: 'Gyroscope', coef: -2.0 },
+					{ name: 'Electric_Motor_STD', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Sand', coef: 1.0 },
+					{ name: 'Silicon', coef: -2.0 },
+					{ name: 'Glass', coef: -4.0 },
+					{ name: 'Concrete_STD', coef: -10.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Silicon', coef: 1.0 },
+					{ name: 'Logic_Circuit_STD', coef: -2.0 },
+					{ name: 'Super_Computer_ALT', coef: -20.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Stabilizer', coef: 1.0 },
+					{ name: 'Quantum_Entangler', coef: -2.0 },
+					{ name: 'Magnetic_Field_Generator', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Steel', coef: 1.0 },
+					{ name: 'Steel_STD', coef: -1.0 },
+					{ name: 'Steel_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Steel', coef: 1.0 },
+					{ name: 'Steel_Rod', coef: -3.0 },
+					{ name: 'Iron_Gear_ALT', coef: -0.125 },
+					{ name: 'Electric_Motor_ALT', coef: -6.0 },
+					{ name: 'Tungsten_Carbide_ALT', coef: -0.5 },
+					{ name: 'Industrial_Frame_ALT', coef: -18.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Steel_Rod', coef: 1.0 },
+					{ name: 'Rotor_STD', coef: -1.0 },
+					{ name: 'Concrete_STD', coef: -1.0 },
+					{ name: 'Nuclear_Fuel_Cell', coef: -1.0 },
+					{ name: 'Electromagnet_ALT', coef: -1.0 / 12.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Super_Computer', coef: 1.0 },
+					{ name: 'Super_Computer_STD', coef: -1.0 },
+					{ name: 'Super_Computer_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Super_Computer', coef: 1.0 },
+					{ name: 'Atomic_Locator', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Tank', coef: 1.0 },
+					{ name: 'Matter_Compressor', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Tungsten_Carbide', coef: 1.0 },
+					{ name: 'Tungsten_Carbide_STD', coef: -1.0 },
+					{ name: 'Tungsten_Carbide_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Tungsten_Carbide', coef: 1.0 },
+					{ name: 'Coupler', coef: -1.0 },
+					{ name: 'Empty_Fuel_Cell', coef: -3.0 },
+					{ name: 'Industrial_Frame_STD', coef: -8.0 },
+					{ name: 'Tank', coef: -4.0 },
+					{ name: 'Turbocharger_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Tungsten_Ore', coef: 1.0 },
+					{ name: 'Tungsten_Carbide_STD', coef: -2.0 },
+					{ name: 'Tungsten_Carbide_ALT', coef: -0.5 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Turbocharger', coef: 1.0 },
+					{ name: 'Turbocharger_STD', coef: -1.0 },
+					{ name: 'Turbocharger_ALT', coef: -1.0 },
+				],
+				bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Turbocharger', coef: 1.0 },
+					{ name: 'Super_Computer_STD', coef: -1.0 },
+					{ name: 'Matter_Compressor', coef: -2.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Wood_Frame', coef: 1.0 },
+					{ name: 'Metal_Frame', coef: -1.0 },
+					{ name: 'Concrete_ALT', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+			{
+				vars: [
+					{ name: 'Wood_Plank', coef: 1.0 },
+					{ name: 'Wood_Frame', coef: -4.0 },
+				],
+				bnds: { type: this.#glpk.GLP_LO, lb: 0.0 },
+			},
+		]
 
-		let allConstraints = boost ? boostCons : nonBoostCons
-		const constraints = Constraints.get(item, alt, boost)
-		for (const constraint of constraints) {
-			allConstraints.push(
-				{
-					vars: constraint,
-					bnds: { type: this.#glpk.GLP_FX, ub: 0.0, lb: 0.0 }
-				}
-			)
+		let all_constraints
+		if (alt && boost) {
+			all_constraints = generalCons.concat(boostCons)
+		} else if (alt) {
+			all_constraints = generalCons.concat(nonBoostCons)
+		} else if (boost) {
+			all_constraints = generalCons.concat(boostCons).concat(nonAltCons)
+		} else {
+			all_constraints = generalCons.concat(nonBoostCons).concat(nonAltCons)
 		}
 
 		const lp: LP = {
@@ -471,11 +1083,11 @@ export class Seed {
 			objective: {
 				direction: this.#glpk.GLP_MAX,
 				vars: [
-					{ name: item, coef: 1.0 },
-				],
+					{ name: item, coef: 1 }
+				]
 			},
 			// @ts-ignore
-			subjectTo: allConstraints,
+			subjectTo: all_constraints
 		}
 		const opt: GLPKOptions = {
 			msglev: this.#glpk.GLP_MSG_OFF,
